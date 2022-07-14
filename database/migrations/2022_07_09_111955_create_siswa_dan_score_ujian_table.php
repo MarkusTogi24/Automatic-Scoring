@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('siswa_dan_score_ujian', function (Blueprint $table) {
             $table->id();
+            $table->integer('id_ujian');
+            $table->integer('id_siswa');
+            $table->float('score');
             $table->timestamps();
         });
     }

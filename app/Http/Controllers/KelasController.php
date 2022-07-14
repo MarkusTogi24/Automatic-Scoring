@@ -2,10 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas;
 use Illuminate\Http\Request;
+use App\Http\Helpers\GeneralHelper;
+use App\Http\Helpers\KelasHelper as HelpersKelasHelper;
+use App\Models\KelasDanMember;
+use Illuminate\Support\Facades\Auth;
 
 class KelasController extends Controller
 {
+
+    private $generalHelper;
+    private $kelasHelper;
+
+    public function __construct()
+    {
+        $this->generalHelper = new GeneralHelper;
+        $this->kelasHelper = new HelpersKelasHelper;
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,6 +30,11 @@ class KelasController extends Controller
     public function index()
     {
         //
+        $this->generalHelper->authorize(["GURU", "SISWA"]);
+        $kelas = Kelas::all();
+        echo $kelas;
+
+        return $kelas;
     }
 
     /**
@@ -35,6 +56,16 @@ class KelasController extends Controller
     public function store(Request $request)
     {
         //
+        $this->generalHelper->authorize(["GURU"]);
+
+        $kelas = new Kelas();
+        $kelas->id_guru = 1;
+        $kelas->name = $request->name;
+        $kelas->enrollment_key = $this->kelasHelper->generate_enrollment_key();
+
+        $kelas->save();
+
+        return $kelas;
     }
 
     /**
@@ -80,5 +111,19 @@ class KelasController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function class_enrollment(Request $request)
+    {
+        $class_id = $this->kelasHelper->get_class_id_from_enrollment_key($request->enrollment_key);
+
+        if ($class_id != null) {
+            $class_and_member = new KelasDanMember;
+            $class_and_member->id_kelas = $class_id;
+            $class_and_member->id_member = Auth::user()->role;
+            $class_and_member->save();
+        }
+
+        return KelasDanMember::all();
     }
 }
