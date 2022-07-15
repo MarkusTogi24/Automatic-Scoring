@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClassroomAndMemberController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\QuestionController;
@@ -24,6 +25,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::resource('/class', ClassroomController::class);
+Route::resource('/classroom', ClassroomController::class);
 Route::resource('/exam', ExamController::class);
 Route::resource('/question', QuestionController::class);
+Route::resource('/member', ClassroomAndMemberController::class);
