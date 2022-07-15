@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->integer('class_id');
             $table->string('name');
+            $table->string('description');
             $table->datetime('start_time');
             $table->datetime('end_time');
             $table->boolean('is_open');
