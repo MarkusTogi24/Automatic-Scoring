@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\QuestionController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +24,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::resource('/class', ClassroomController::class);
+Route::resource('/exam', ExamController::class);
+Route::resource('/question', QuestionController::class);
