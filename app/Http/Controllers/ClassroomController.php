@@ -79,12 +79,12 @@ class ClassroomController extends Controller
     public function show($id)
     {
         //
-        if (count(ClassroomAndMember::all()->where("classroom_id", $id)->where("member_id", Auth::user()->id)) > 0){
-            $classroom = Classroom::find($id);
-            echo $classroom;
-            return view('update_classroom', compact('classroom'));
-    
-        }
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($id);
+
+        $classroom = Classroom::find($id);
+        echo $classroom;
+        return view('update_classroom', compact('classroom'));
     }
 
     /**
@@ -96,11 +96,12 @@ class ClassroomController extends Controller
     public function edit($id)
     {
         //
-        if (count(ClassroomAndMember::all()->where("classroom_id", $id)->where("member_id", Auth::user()->id)) > 0){
-            $classroom = Classroom::find($id);
-            echo $classroom;
-            return view('update_classroom', compact('classroom'));
-            }
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($id);
+
+        $classroom = Classroom::find($id);
+        echo $classroom;
+        return view('update_classroom', compact('classroom'));
     }
 
     /**
@@ -115,7 +116,8 @@ class ClassroomController extends Controller
         //
         $classroom = Classroom::find($id);
         
-        $this->helper->authorizing_by_user_id([$classroom->teacher_id]);
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($id);
 
         $classroom->name = $request->name;
         $classroom->description = $request->description;
@@ -135,7 +137,8 @@ class ClassroomController extends Controller
     {
         //
         $classroom = Classroom::find($id);
-        $this->helper->authorizing_by_user_id([$classroom->teacher_id]);
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($id);
 
         $classroom->delete();
     }
