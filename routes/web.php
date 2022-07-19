@@ -26,6 +26,11 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('/classroom', ClassroomController::class);
-Route::resource('/exam', ExamController::class);
+Route::get('/classroom/{id}/exam-create', [ExamController::class, 'create']);
+Route::get('/classroom/{id}/exams', [ExamController::class, 'show']);
+Route::post('/classroom/exam-create', [ExamController::class, 'store']);
+Route::get('/classroom/exam-update/{id}', [ExamController::class, 'edit']);
+Route::put('/classroom/exam-update/{id}', [ExamController::class, 'update']);
+Route::get('/deleteexam/{id}', [ExamController::class, 'destroy']);
 Route::resource('/question', QuestionController::class);
 Route::resource('/member', ClassroomAndMemberController::class);
