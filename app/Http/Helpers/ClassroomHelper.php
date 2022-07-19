@@ -3,6 +3,8 @@
 namespace App\Http\Helpers;
 
 use App\Models\Classroom;
+use App\Models\ClassroomAndMember;
+use Illuminate\Support\Facades\Auth;
 
 class ClassroomHelper extends GeneralHelper{
 
@@ -40,6 +42,14 @@ class ClassroomHelper extends GeneralHelper{
         }
 
         return null;
+    }
+
+    function authorizing_classroom_member($class_id){
+        $row = ClassroomAndMember::all()->where('classroom_id', $class_id)->where('member_id', Auth::user()->id);
+        
+        if (count($row) < 1) {
+            abort(403);
+        }
     }
 }
 
