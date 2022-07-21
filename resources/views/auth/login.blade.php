@@ -3,7 +3,7 @@
 @section('content')
     <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/4 p-4 md:p-3 xl:p-2">
         <p class="text-lg text-primary font-bold  px-2">Selamat Datang</p>
-        <img src="{{ asset('design/Reading_Book.png') }}" alt="" class="w-3/4 h-auto mx-auto my-3">
+        <img src="{{ asset('design/reading_book.svg') }}" alt="" class="w-3/4 h-auto mx-auto my-3">
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
@@ -11,7 +11,7 @@
             <div class="mb-4 px-2">
                 <label for="email" class="block mb-2 text-base font-medium text-gray-900">{{ __('Email') }}</label>
                 <input type="email" id="email" name="email"
-                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5" 
+                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
                     value="{{ old('email') }}" required autocomplete="email" placeholder="student@school.com">
                 {{-- @error('email') is-invalid @enderror --}}
                 {{-- @error('email')

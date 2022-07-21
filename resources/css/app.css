@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom-placeholder::placeholder {
+    color: rgb(96 149 246);
+    opacity: 1; /* Firefox */
+}
+.custom-placeholder:-ms-input-placeholder,
+.custom-placeholder::-ms-input-placeholder{
+    color: rgb(96 149 246);
+}
