@@ -27,3 +27,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::resource('/class', ClassroomController::class);
 Route::resource('/exam', ExamController::class);
 Route::resource('/question', QuestionController::class);
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
