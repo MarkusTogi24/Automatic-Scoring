@@ -121,13 +121,13 @@ class ExamController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($classroom_id, $exam_id)
     {
         //
-        $exam = Exam::find($id);
+        $exam = Exam::find($exam_id);
 
         $this->helper->authorizing_by_role("GURU");
-        $this->helper->authorizing_classroom_member($exam->id);
+        $this->helper->authorizing_classroom_member($classroom_id);
 
         $exam->delete();
     }
