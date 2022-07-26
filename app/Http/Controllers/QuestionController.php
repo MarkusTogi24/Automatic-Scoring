@@ -15,6 +15,7 @@ class QuestionController extends Controller
     public function __construct()
     {
         $this->helper = new ExamHelper;
+        $this->middleware('auth');
     }
 
     /**
@@ -25,6 +26,7 @@ class QuestionController extends Controller
     public function index($classroom_id, $exam_id)
     {
         //
+        $this->helper->authorizing_by_role("GURU");
         $this->helper->authorizing_classroom_member($classroom_id);
 
         $questions = Question::all()->where('exam_id', $exam_id);
@@ -74,12 +76,11 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($classroom_id, $exam_id, $question_id)
+    public function show($classroom_id, $question_id)
     {
         //
-        $exam = Exam::find($exam_id);
-        $this->helper->authorizing_exam_question_access($classroom_id, $exam);
-
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($classroom_id);
         $question = Question::find($question_id);
 
         return $question;
@@ -137,5 +138,13 @@ class QuestionController extends Controller
         
         $question = Question::find($question_id);
         $question->delete();
+    }
+
+    public function startExam($classroom_id, $exam_id){
+        $this->helper->authorizing_exam_question_access_for_student($classroom_id, $exam_id);
+
+        $questions = Question::select("*")->where('exam_id', $exam_id)->get();
+        
+        return $questions;
     }
 }

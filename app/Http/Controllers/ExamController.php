@@ -21,9 +21,13 @@ class ExamController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($classroom_id)
     {
         //
+        $this->helper->authorizing_classroom_member($classroom_id);
+        $exams = Exam::select("*")->where('class_id', $classroom_id)->get();
+
+        return $exams;
     }
 
     /**
@@ -31,11 +35,13 @@ class ExamController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id)
+    public function create($classroom_id)
     {
         //
-        
-        return view('create_ujian', compact('id'));
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($classroom_id);
+
+        return view('create_ujian', compact('classroom_id'));
     }
 
     /**
@@ -44,14 +50,14 @@ class ExamController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $classroom_id)
     {
         //        
         $this->helper->authorizing_by_role("GURU");
-        $this->helper->authorizing_classroom_member($request->class_id);
+        $this->helper->authorizing_classroom_member($classroom_id);
 
         $exam = new Exam;
-        $exam->class_id = $request->class_id;
+        $exam->class_id = $classroom_id;
         $exam->name = $request->name;
         $exam->description = $request->description;
         $exam->start_time = $request->start_time;
@@ -68,13 +74,14 @@ class ExamController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($classroom_id, $exam_id)
     {
         //
-        $this->helper->authorizing_classroom_member($id);
-        $exams = Exam::all()->where('class_id', $id);
+        $this->helper->authorizing_by_role(["GURU", "SISWA"]);
+        $this->helper->authorizing_classroom_member($classroom_id);
 
-        return $exams;
+        $exam = Exam::find($exam_id);
+        return $exam;
     }
 
     /**
@@ -83,11 +90,14 @@ class ExamController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($classroom_id, $exam_id)
     {
         //  
-        $exam = Exam::find($id);
-        return view ('update_ujian', compact('exam'));
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($classroom_id);
+
+        $exam = Exam::find($exam_id);
+        return view ('update_ujian', compact('exam', 'classroom_id'));
     }
 
     /**
@@ -97,14 +107,14 @@ class ExamController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $classroom_id, $exam_id)
     {
         //
-        $exam = Exam::find($id);
-
         $this->helper->authorizing_by_role("GURU");
-        $this->helper->authorizing_classroom_member($exam->class_id);
+        $this->helper->authorizing_classroom_member($classroom_id);
         
+        $exam = Exam::find($exam_id);
+
         $exam->name = $request->name;
         $exam->description = $request->description;
         $exam->start_time = $request->start_time;
@@ -130,5 +140,16 @@ class ExamController extends Controller
         $this->helper->authorizing_classroom_member($classroom_id);
 
         $exam->delete();
+    }
+
+    public function changeStatus(Request $request, $classroom_id, $exam_id){
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($classroom_id);
+
+        $exam = Exam::find($exam_id);
+        $exam->is_open = $request->is_open;
+        $exam->save();
+
+        return $exam;
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Classroom;
 use App\Models\ClassroomAndMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClassroomController extends Controller
 {
@@ -27,8 +28,8 @@ class ClassroomController extends Controller
     {
         //
         $this->helper->authorizing_by_role(["GURU", "SISWA"]);
-
-        $classrooms = Classroom::all();
+        
+        $classrooms = DB::select(DB::raw("SELECT * FROM classroom LEFT JOIN classroom_and_member ON classroom.id = classroom_and_member.classroom_id WHERE classroom_and_member.member_id = ".Auth::user()->id.";"));
 
         return $classrooms;
     }
@@ -83,8 +84,8 @@ class ClassroomController extends Controller
         $this->helper->authorizing_classroom_member($id);
 
         $classroom = Classroom::find($id);
-        echo $classroom;
-        return view('update_classroom', compact('classroom'));
+        
+        return $classroom;
     }
 
     /**
@@ -100,7 +101,7 @@ class ClassroomController extends Controller
         $this->helper->authorizing_classroom_member($id);
 
         $classroom = Classroom::find($id);
-        echo $classroom;
+
         return view('update_classroom', compact('classroom'));
     }
 

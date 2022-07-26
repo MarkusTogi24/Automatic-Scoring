@@ -23,10 +23,13 @@ class ClassroomAndMemberController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($classroom_id)
     {
         //
-        return view('member_create');
+        $this->helper->authorizing_classroom_member($classroom_id);
+
+        $members = ClassroomAndMember::all()->where('classroom_id', $classroom_id);
+        return $members;
     }
 
     /**
