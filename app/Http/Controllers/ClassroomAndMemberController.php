@@ -2,18 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\ClassroomHelper;
+use App\Models\Classroom;
+use App\Models\ClassroomAndMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClassroomAndMemberController extends Controller
 {
+    private $helper;
+
+    public function __construct()
+    {
+        $this->middleware("auth");
+        $this->helper = new ClassroomHelper;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($classroom_id)
     {
         //
+        $this->helper->authorizing_classroom_member($classroom_id);
+
+        $members = ClassroomAndMember::all()->where('classroom_id', $classroom_id);
+        return $members;
     }
 
     /**
@@ -24,6 +40,7 @@ class ClassroomAndMemberController extends Controller
     public function create()
     {
         //
+        return view('member_create');
     }
 
     /**
@@ -35,6 +52,19 @@ class ClassroomAndMemberController extends Controller
     public function store(Request $request)
     {
         //
+        $this->helper->authorizing_by_role(["GURU", "SISWA"]);
+        
+        $classroom = Classroom::all()->where("enrollment_key", $request->enrollment_key)->first();
+        echo $classroom;
+        if ($classroom != null){
+            if (count(ClassroomAndMember::all()->where('classroom_id', $classroom->id)->where('member_id', Auth::user()->id)) == 0){
+                $member = new ClassroomAndMember;
+                $member->classroom_id = $classroom->id;
+                $member->member_id = Auth::user()->id;
+    
+                $member->save();    
+            }
+        }
     }
 
     /**
