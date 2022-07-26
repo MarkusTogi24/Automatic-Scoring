@@ -7,6 +7,7 @@ use App\Models\Classroom;
 use App\Models\ClassroomAndMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClassroomAndMemberController extends Controller
 {
@@ -28,7 +29,7 @@ class ClassroomAndMemberController extends Controller
         //
         $this->helper->authorizing_classroom_member($classroom_id);
 
-        $members = ClassroomAndMember::all()->where('classroom_id', $classroom_id);
+        $members = DB::select(DB::raw("SELECT users.name, users.email, users.role FROM classroom_and_member LEFT JOIN users ON classroom_and_member.member_id = users.id WHERE classroom_id = $classroom_id;"));
         return $members;
     }
 
