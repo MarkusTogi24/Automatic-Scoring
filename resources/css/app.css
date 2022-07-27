@@ -10,3 +10,4 @@
 .custom-placeholder::-ms-input-placeholder{
     color: rgb(96 149 246);
 }
+[x-cloak] { display: none !important; }
