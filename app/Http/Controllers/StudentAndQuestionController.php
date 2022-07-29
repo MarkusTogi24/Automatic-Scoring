@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StudentAndQuestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StudentAndQuestionController extends Controller
 {
@@ -80,5 +82,29 @@ class StudentAndQuestionController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function saveAnswer($question_id, $answer){
+        $entity = new StudentAndQuestion;
+
+        $entity->question_id = $question_id;
+        $entity->answer = $answer;
+        $entity->student_id = Auth::user()->id;
+        $entity->score = 1;
+        $entity->save();
+
+        $answer_id = $entity->id;
+        
+        return compact('answer_id', 'answer');
+    }
+    
+    public function updateAnswer($answer_id, $answer){
+        $entity = StudentAndQuestion::find($answer_id);
+
+        $entity->answer = $answer;
+        $entity->score = 1;
+        $entity->save();
+
+        return compact('answer_id', 'answer');
     }
 }

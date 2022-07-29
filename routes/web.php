@@ -4,6 +4,7 @@ use App\Http\Controllers\ClassroomAndMemberController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\StudentAndQuestionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -70,3 +71,6 @@ Route::get('/classroom/{classroom_id}/exam-delete-question/{question_id}', [Ques
 
 Route::resource('/question', QuestionController::class);
 Route::resource('/member', ClassroomAndMemberController::class);
+
+Route::get('/save_answer/{question_id}/{answer}', [StudentAndQuestionController::class, 'saveAnswer']);
+Route::get('/update_answer/{answer_id}/{answer}', [StudentAndQuestionController::class, 'updateAnswer']);

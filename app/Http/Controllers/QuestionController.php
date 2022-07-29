@@ -6,6 +6,8 @@ use App\Http\Helpers\ExamHelper;
 use App\Models\Exam;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class QuestionController extends Controller
 {
@@ -142,9 +144,16 @@ class QuestionController extends Controller
 
     public function startExam($classroom_id, $exam_id){
         $this->helper->authorizing_exam_question_access_for_student($classroom_id, $exam_id);
-
-        $questions = Question::select("*")->where('exam_id', $exam_id)->get();
+        // SELECT question.*, student_and_question.answer as answer, student_and_question.id as answer_id FROM question LEFT JOIN student_and_question ON question.id = student_and_question.question_id and student_and_question.student_id = 6 WHERE question.exam_id = 1;
+        $questions = Question::select("question.*", "student_and_question.answer as answer", "student_and_question.id as answer_id")
+        ->leftJoin('student_and_question', function($join)
+        {
+            $join->on('question.id', 'student_and_question.question_id');
+            $join->on('student_and_question.student_id', DB::raw(Auth::user()->id));
+        })                   
+        ->where('question.exam_id', $exam_id)
+        ->orderBy('id')->get();
         
-        return $questions;
+        return view ('start-exam', compact('questions'));
     }
 }
