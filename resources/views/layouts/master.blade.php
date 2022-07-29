@@ -17,7 +17,7 @@
     <!-- Main Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body 
+<body
     x-data="{
         showSidebar     : false,
         showAuthMenu    : false,
@@ -74,7 +74,7 @@
         </div>
     </nav>
 
-    <main class="relative w-full overflow-x-hidden">
+    <main class="relative w-full">
         <!-- SIDEBAR -->
         <aside class="bg-primary-10 fixed z-[1000] top-[4.25rem] h-[calc(100vh-4.25rem)] p-3 flex flex-col gap-4"
             x-cloak
@@ -200,7 +200,7 @@
             </a>
         </aside>
         
-        <div class="fixed z-[500] w-full bg-white top-[4.25rem] right-0 min-h-[calc(100vh-4.25rem)] p-4"
+        <div class="absolute z-[500] w-full bg-white top-[4.25rem] right-0 min-h-[calc(100vh-4.25rem)] p-4"
             x-bind:class="showSidebar ? 'lg:w-[calc(100vw-304px)]' : 'lg:w-[calc(100vw-4.25rem)]' "
             >
             {{-- @yield('alertMsgContainer') --}}

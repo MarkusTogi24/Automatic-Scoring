@@ -59,6 +59,7 @@
         <!-- LOGOUT BUTTON -->
         <div class="px-3">
             <form action="{{ route('logout') }}" method="POST">
+                @csrf
                 <button type="submit" class="text-sm flex gap-2 items-center w-full py-1 px-2 rounded border-2 border-danger bg-white text-danger hover:bg-danger hover:text-white">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

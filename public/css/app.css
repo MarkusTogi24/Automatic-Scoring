@@ -694,6 +694,8 @@ video {
   gap: 0.25rem;
 }.overflow-hidden {
   overflow: hidden;
+}.overflow-y-auto {
+  overflow-y: auto;
 }.overflow-x-hidden {
   overflow-x: hidden;
 }.rounded-lg {
@@ -760,6 +762,9 @@ video {
 }.bg-primary-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(96 149 246 / var(--tw-bg-opacity));
+}.bg-gray-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
 }.bg-\[url\(\'\/image\/BG1\.png\'\)\] {
   background-image: url('/image/BG1.png');
 }.bg-\[url\(\'\/image\/BG2\.png\'\)\] {
