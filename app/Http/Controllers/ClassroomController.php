@@ -19,43 +19,26 @@ class ClassroomController extends Controller
         $this->middleware("auth");
         $this->helper = new ClassroomHelper();
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
-        //
         $this->helper->authorizing_by_role(["GURU", "SISWA"]);
         
         $classrooms = DB::select(DB::raw("SELECT * FROM classroom LEFT JOIN classroom_and_member ON classroom.id = classroom_and_member.classroom_id WHERE classroom_and_member.member_id = ".Auth::user()->id.";"));
 
-        return $classrooms;
+        // dd($classrooms);
+        return view('pages.user.classroom.index', compact('classrooms'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create()
     {
-        //
         $this->helper->authorizing_by_role("GURU");
 
         return view('create_classroom');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
-        //
         $this->helper->authorizing_by_role("GURU");
         
         $new_classroom = new Classroom;
@@ -69,17 +52,16 @@ class ClassroomController extends Controller
         $new_classroom_and_member->classroom_id = $new_classroom->id;
         $new_classroom_and_member->member_id = Auth::user()->id;
         $new_classroom_and_member->save();
-    }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+        return back()->with(
+            'alert',[
+                "message"   => "Kelas {$new_classroom->name} berhasil dibuat!",
+                "status"    => "success"
+            ]);
+    }
+    
     public function show($id)
     {
-        //
         $this->helper->authorizing_by_role("GURU");
         $this->helper->authorizing_classroom_member($id);
 
@@ -87,16 +69,9 @@ class ClassroomController extends Controller
         
         return $classroom;
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($id)
     {
-        //
         $this->helper->authorizing_by_role("GURU");
         $this->helper->authorizing_classroom_member($id);
 
@@ -104,17 +79,9 @@ class ClassroomController extends Controller
 
         return view('update_classroom', compact('classroom'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(Request $request, $id)
     {
-        //
         $classroom = Classroom::find($id);
         
         $this->helper->authorizing_by_role("GURU");
@@ -127,20 +94,37 @@ class ClassroomController extends Controller
 
         return $classroom;
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($id)
     {
-        //
         $classroom = Classroom::find($id);
         $this->helper->authorizing_by_role("GURU");
         $this->helper->authorizing_classroom_member($id);
 
         $classroom->delete();
+    }
+
+    public function enroll(Request $request)
+    {
+        $classroom = Classroom::firstWhere('enrollment_key', $request->enrollment_key);
+
+        if(!$classroom){
+            return back()->with(
+                'alert',[
+                    "message"   => "Kode kelas yang anda masukkan tidak dikenali, harap periksa kembali dan coba lagi!",
+                    "status"    => "failed"
+                ]);
+        }
+
+        ClassroomAndMember::create([
+            'classroom_id'  => $classroom->id,
+            'member_id'     => Auth::user()->id
+        ]);
+
+        return back()->with(
+            'alert',[
+                "message"   => "Anda telah berhasil bergabung di kelas {$classroom->name}!",
+                "status"    => "success"
+            ]);
     }
 }

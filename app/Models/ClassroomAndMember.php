@@ -10,4 +10,9 @@ class ClassroomAndMember extends Model
     use HasFactory;
 
     protected $table = 'classroom_and_member';
+
+    protected $fillable = [
+        'classroom_id',
+        'member_id',
+    ];
 }

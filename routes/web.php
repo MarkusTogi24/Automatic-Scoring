@@ -16,10 +16,28 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// CLASS MEMBER__
+Route::middleware(['auth', 'user'])->group(function () {
+    Route::controller(ClassroomController::class)->as('classroom.')->group(function () {
+        Route::get('home', 'index')->name('index');
+        Route::post('home', 'store')->name('store');
+        Route::post('home', 'enroll')->name('enroll');
+    });
+});
+
+// ADMIN__
+Route::middleware(['auth', 'admin'])->as('admin.')->prefix('admin')->group(function () {
+    Route::get('dashboard', function() {
+        return view('welcome');
+    })->name('dashboard');
+});
+
+
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Route for CRUD classroom
-Route::resource('/classroom', ClassroomController::class);
+// Route::resource('/classroom', ClassroomController::class);
 
 // Route for see member of classroom
 Route::get('/classroom/{classroom_id}/members', [ClassroomAndMemberController::class, 'index']);
@@ -62,3 +80,7 @@ Route::get('/classroom/{classroom_id}/exam-delete-question/{question_id}', [Ques
 
 Route::resource('/question', QuestionController::class);
 Route::resource('/member', ClassroomAndMemberController::class);
+
+Route::fallback(function () {
+    return view('welcome');
+});

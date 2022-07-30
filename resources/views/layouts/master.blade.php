@@ -200,17 +200,18 @@
             </a>
         </aside>
         
-        <div class="absolute z-[500] w-full bg-white top-[4.25rem] right-0 min-h-[calc(100vh-4.25rem)] p-4"
-            x-bind:class="showSidebar ? 'lg:w-[calc(100vw-304px)]' : 'lg:w-[calc(100vw-4.25rem)]' "
+        <div class="absolute w-full bg-white top-[4.25rem] right-0 min-h-[calc(100vh-4.25rem)] p-4"
+            x-bind:class="showSidebar ? 'lg:w-[calc(100vw-321px)]' : 'lg:w-[calc(100vw-4.25rem-17px)]' "
             >
             {{-- @yield('alertMsgContainer') --}}
             @yield('content')
         </div>
     </main>
 
-    @yield('scripts')
-
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/flowbite.js') }}"></script>
+    <script src="{{ asset('js/jQuery.min.js') }}"></script>
+    @yield('scripts')
 </body>
 </html>
