@@ -2,39 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Helpers\ClassroomHelper;
+use DateTime;
+use DateInterval;
+use Carbon\Carbon;
 use App\Models\Exam;
+use App\Models\Classroom;
 use Illuminate\Http\Request;
+use App\Http\Helpers\ExamHelper;
+use App\Http\Helpers\ClassroomHelper;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Exam\StoreExamRequest;
+use App\Models\Question;
 
 class ExamController extends Controller
 {
 
     private $helper;
+    private $exam_helper;
 
     public function __construct()
     {
-        $this->helper = new ClassroomHelper;
+        $this->helper       = new ClassroomHelper;
+        $this->exam_helper  = new ExamHelper;
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index($classroom_id)
     {
-        //
         $this->helper->authorizing_classroom_member($classroom_id);
         $exams = Exam::select("*")->where('class_id', $classroom_id)->get();
 
         return $exams;
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create($classroom_id)
     {
         //
@@ -43,53 +43,51 @@ class ExamController extends Controller
 
         return view('create_ujian', compact('classroom_id'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, $classroom_id)
-    {
-        //        
+    
+    public function store(StoreExamRequest $request, $classroom_id)
+    {   
         $this->helper->authorizing_by_role("GURU");
         $this->helper->authorizing_classroom_member($classroom_id);
 
+        dd($request);
+
+        $validated = $request->validated();
+
         $exam = new Exam;
-        $exam->class_id = $classroom_id;
-        $exam->name = $request->name;
-        $exam->description = $request->description;
-        $exam->start_time = $request->start_time;
-        $exam->end_time = $request->end_time;
-        $exam->is_open = $request->is_open;
+        $exam->class_id     = $classroom_id;
+        $exam->name         = $validated['name'];
+        $exam->description  = $validated['description'];
+        $exam->is_open      = 1;
+
+        // Set start_time
+        $request_start      = new DateTime($validated['start_time']);
+        $exam->start_time   = $request_start;
+
+        // Set end_time
+        $hours              = (int) explode(":", $validated['duration'])[0];
+        $minutes            = (int) explode(":", $validated['duration'])[1];
+        $exam->end_time     = (clone $request_start)->add(new DateInterval("PT{$hours}H{$minutes}M"));
+
         $exam->save();
 
-        return $exam;
+        return redirect()->route('classroom.show', $classroom_id)
+            ->with("success","Data {$exam->name} berhasil disimpan!");
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($classroom_id, $exam_id)
+    public function show(Classroom $classroom, Exam $exam)
     {
-        //
         $this->helper->authorizing_by_role(["GURU", "SISWA"]);
-        $this->helper->authorizing_classroom_member($classroom_id);
+        $this->helper->authorizing_classroom_member($classroom->id);
 
-        $exam = Exam::find($exam_id);
-        return $exam;
+        $duration = $this->exam_helper->get_duration($exam);
+        
+        $questions = Question::query()
+            ->where('exam_id', $exam->id)
+            ->get();
+
+        return view('pages.user.exam.index', compact('classroom', 'exam', 'questions', 'duration'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($classroom_id, $exam_id)
     {
         //  
@@ -99,14 +97,7 @@ class ExamController extends Controller
         $exam = Exam::find($exam_id);
         return view ('update_ujian', compact('exam', 'classroom_id'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(Request $request, $classroom_id, $exam_id)
     {
         //
@@ -124,13 +115,7 @@ class ExamController extends Controller
 
         return $exam;
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($classroom_id, $exam_id)
     {
         //

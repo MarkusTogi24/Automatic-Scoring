@@ -4,7 +4,7 @@
 
 <div class="w-full"
     x-data="{
-        showPopUp : false
+        showPopUp : @if(Auth::user()->role == "GURU" && $errors->hasBag('create_classroom')) true @else false @endif
     }">
 
     @include('components.session-alert')
@@ -47,7 +47,10 @@
                                 <label for="name" class="block mb-2 text-base font-medium text-gray-900">{{ __('Nama Kelas') }}</label>
                                 <input type="text" id="name" name="name" value="{{ old('name') }}"
                                     class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
-                                    required autocomplete="off" placeholder="Nama Kelas">
+                                    autocomplete="off" placeholder="Nama Kelas">
+                                @error('name', 'create_classroom')
+                                    <p class="block mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                             <!-- CLASSROOM DESCRIPTION -->
                             <div class="">
@@ -59,7 +62,12 @@
                                 <span id="Description_Content" 
                                     class="overflow-hidden border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 focus:ring-1 outline-none"
                                     role="textbox" contenteditable>
+                                    {{ old('description') ? old('description') : 'Deskripsi Singkat' }}
                                 </span>
+
+                                @error('description', 'create_classroom')
+                                    <p class="block mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         <!-- SUBMIT BUTTON -->
@@ -70,7 +78,7 @@
                         </div>
                     </form>
                 @else
-                    <form action="{{ route('classroom.enroll') }}" method="POST">
+                    <form action="{{ route('classroom_member.enroll') }}" method="POST">
                         @method('POST')
                         @csrf
                         <!-- CLASSROOM NAME -->
@@ -92,27 +100,35 @@
         </div>
     </div>
 
-    <div class="w-full lg:w-[calc(100vw-353px)] grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-
-        @forelse ($classrooms as $classroom)
-            <div class="relative w-full p-2 bg-white rounded-md drop-shadow-md overflow-hidden">
-                <div class="w-full aspect-video bg-[url('/image/BG2.png')] bg-cover bg-center rounded-md mb-2">
-                </div>
-                <div class="w-full h-16 relative px-2">
-                    <a href="" class="flex flex-col text-primary hover:text-primary-70 font-medium tracking-wide">
-                        <span class="block m-0">{{ $classroom->name }}</span>
-                        <span class="block m-0">{{ $classroom->description }}</span>
-                    </a>
-                    <div class="absolute rounded-full w-[72px] h-[72px] bottom-10 right-5 overflow-hidden">
-                        <img src="{{ asset('image/dummy_pp.png') }}" class="w-full h-auto" alt="TEACHER">
+    @if ($classrooms)
+        <div class="w-full lg:w-[calc(100vw-361px)] grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            @foreach ($classrooms as $classroom)
+                <div class="relative w-full p-2 bg-white rounded-md drop-shadow-md overflow-hidden">
+                    <div class="w-full aspect-video bg-[url('/image/BG2.png')] bg-cover bg-center rounded-md mb-2">
+                    </div>
+                    <div class="w-full h-16 relative px-2">
+                        <a href="{{ route('classroom.show', $classroom->classroom_id) }}" class="flex flex-col text-primary hover:text-primary-70 font-medium tracking-wide">
+                            <span class="block m-0">{{ $classroom->name }}</span>
+                            @php
+                                $exploded = explode(" ",$classroom->description);
+                            @endphp
+                            <span class="block m-0">{{ implode(" ", array_splice($exploded, 0, 2)) }}</span>
+                        </a>
+                        <div class="absolute rounded-full w-[72px] h-[72px] bottom-10 right-5 overflow-hidden">
+                            <img src="{{ asset('image/dummy_pp.png') }}" class="w-full h-auto" alt="TEACHER">
+                        </div>
                     </div>
                 </div>
-            </div>
-        @empty
-            {{-- <div></div> --}}
-        @endforelse
-
-    </div>
+            @endforeach
+        </div>
+    @else  
+        <div class="w-full h-[calc(100vh-9.5rem)] flex flex-col items-center justify-center">
+            <img src="{{ asset('image/EMPTY.jpg') }}" class="w-auto h-1/2 mb-3" alt="EMPTY">
+            <p class="text-primary text-lg font-semibold tracking-wide">
+                {{ Auth::user()->role == "GURU" ? 'Buat' : 'Gabung' }} kelas untuk memulai
+            </p>
+        </div>
+    @endif
 </div>
 @endsection
 
@@ -121,6 +137,20 @@
         $(document).ready(function () {
             $("#Description_Content").on("keyup", function () {
                 $("#description").val($(this).text());
+            });
+            
+            $("#Description_Content").on('focusin', function () { 
+                let text = $(this).text().trim();
+                if(text == "Deskripsi Singkat"){
+                    $(this).text(""); 
+                }
+            });
+
+            $("#Description_Content").on('focusout', function () { 
+                let text = $(this).text().trim();
+                if(text == ""){
+                    $(this).text("Deskripsi Singkat"); 
+                }
             });
         });
     </script>

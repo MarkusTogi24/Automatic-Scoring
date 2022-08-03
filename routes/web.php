@@ -19,10 +19,23 @@ Auth::routes();
 // CLASS MEMBER__
 Route::middleware(['auth', 'user'])->group(function () {
     Route::controller(ClassroomController::class)->as('classroom.')->group(function () {
-        Route::get('home', 'index')->name('index');
-        Route::post('home', 'store')->name('store');
-        Route::post('home', 'enroll')->name('enroll');
+        Route::get('beranda', 'index')->name('index');
+        Route::post('store-classroom', 'store')->name('store');
+        Route::get('mata-pelajaran/{id}', 'show')->name('show');
+        Route::post('mata-pelajaran/{id}', 'update')->name('update');
     });
+
+    Route::controller(ClassroomAndMemberController::class)->as('classroom_member.')->group( function () {
+        Route::post('enroll-classroom', 'store')->name('enroll');
+    });
+
+    Route::controller(ExamController::class)->as('exam.')->group(function () {
+        Route::get('mata-pelajaran/{classroom}/ujian/{exam}', 'show')->name('show');
+        Route::post('mata-pelajaran/{classroom_id}/ujian-baru', 'store')->name('store');
+    });
+    // Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
+
+    
 });
 
 // ADMIN__
@@ -43,14 +56,14 @@ Route::middleware(['auth', 'admin'])->as('admin.')->prefix('admin')->group(funct
 Route::get('/classroom/{classroom_id}/members', [ClassroomAndMemberController::class, 'index']);
 
 // Route for create new exam
-Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
-Route::post('/classroom/{classroom_id}/exam-create', [ExamController::class, 'store']);
+// Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
+// Route::post('/classroom/{classroom_id}/exam-create', [ExamController::class, 'store']);
 
 // Route for show all exam of the classroom
-Route::get('/classroom/{classroom_id}/exam-show-all', [ExamController::class, 'index']);
+// Route::get('/classroom/{classroom_id}/exam-show-all', [ExamController::class, 'index']);
 
 // Route for show one exam by exam id
-Route::get('/classroom/{classroom_id}/exam/{exam_id}', [ExamController::class, 'show']);
+// Route::get('/classroom/{classroom_id}/exam/{exam_id}', [ExamController::class, 'show']);
 
 // Route for updating exam information
 Route::get('/classroom/{classroom_id}/exam-update/{exam_id}', [ExamController::class, 'edit']);

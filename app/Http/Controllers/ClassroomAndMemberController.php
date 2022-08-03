@@ -17,12 +17,7 @@ class ClassroomAndMemberController extends Controller
         $this->middleware("auth");
         $this->helper = new ClassroomHelper;
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index($classroom_id)
     {
         //
@@ -31,82 +26,53 @@ class ClassroomAndMemberController extends Controller
         $members = ClassroomAndMember::all()->where('classroom_id', $classroom_id);
         return $members;
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create()
     {
         //
         return view('member_create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
-        //
         $this->helper->authorizing_by_role(["GURU", "SISWA"]);
         
-        $classroom = Classroom::all()->where("enrollment_key", $request->enrollment_key)->first();
-        echo $classroom;
-        if ($classroom != null){
-            if (count(ClassroomAndMember::all()->where('classroom_id', $classroom->id)->where('member_id', Auth::user()->id)) == 0){
-                $member = new ClassroomAndMember;
-                $member->classroom_id = $classroom->id;
-                $member->member_id = Auth::user()->id;
-    
-                $member->save();    
-            }
+        $classroom = Classroom::firstWhere("enrollment_key", $request->enrollment_key);
+
+        if(!$classroom){
+            return back()
+                ->with('failed', "Kode kelas yang anda masukkan tidak dikenali, harap periksa kembali dan coba lagi!" );
         }
+
+        if(ClassroomAndMember::where('classroom_id', $classroom->id)->where('member_id', Auth::user()->id)->count() > 0){
+            return back()
+                ->with('warning', "Anda telah bergabung di kelas {$classroom->name}!" );
+        }
+
+        ClassroomAndMember::create([
+            'classroom_id'  => $classroom->id,
+            'member_id'     => Auth::user()->id
+        ]);
+
+        return redirect()->route('classroom.index')
+            ->with('success', "Sekarang anda bergabung di kelas {$classroom->name}!");
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($id)
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(Request $request, $id)
     {
         //
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($id)
     {
         //

@@ -4,7 +4,7 @@
         x-on:click="showAuthMenu =! showAuthMenu"
     >
         <img src="{{ asset('image/dummy_pp.png') }}" class="w-9 h-9" alt="">
-        <p class="hidden lg:inline-block text-sm">{{ Auth::user()->name }}</p>
+        <p class="hidden lg:inline-block text-sm">{{ explode(" ",Auth::user()->name)[0] }}</p>
         <span class="hidden lg:inline-block" x-bind:class=" showAuthMenu && 'rotate-180' ">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -19,7 +19,7 @@
         x-transition:enter.duration.300ms
         x-transition:leave.duration.300ms>
         <div class="px-3 lg:hidden">
-            <p class="text-sm text-primary-80 font-semibold">{{ Auth::user()->name }}</p>
+            <p class="text-sm text-primary-80 font-semibold">{{ explode(" ",Auth::user()->name)[0] }}</p>
         </div>
 
         <!-- SEARCH INPUT TRIGGER -->
