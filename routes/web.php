@@ -4,6 +4,7 @@ use App\Http\Controllers\ClassroomAndMemberController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\UploadCsvController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -70,3 +71,9 @@ Route::get('/classroom/{classroom_id}/exam-delete-question/{question_id}', [Ques
 
 Route::resource('/question', QuestionController::class);
 Route::resource('/member', ClassroomAndMemberController::class);
+
+Route::get('/upload-csv', function () {
+    return view('upload-csv');
+});
+
+Route::post('/upload-csv', [UploadCsvController::class, 'upload']);
