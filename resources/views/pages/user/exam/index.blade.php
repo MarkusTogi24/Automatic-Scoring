@@ -619,6 +619,49 @@
                 </div>
             </div>
         </div>
+    @else
+        <div class="w-full mb-4 p-4 lg:p-10 border border-primary rounded-lg text-gray-900">
+            <div class="flex flex-col lg:flex-row gap-3 lg:gap-0 lg:justify-between items-start lg:items-center mb-4">
+                <p class="block m-0 text-lg font-bold tracking-wide">
+                    {{ $exam->name }}
+                </p>
+                <p class="block m-0 text-xs lg:text-sm font-medium">
+                    Tenggat :
+                    {{ Carbon\Carbon::parse($exam->start_time)->isoFormat('D MMMM Y') }}, 
+                    {{ date_format(date_create($exam->start_time),"H:i") }}
+                </p>
+            </div>
+            <p class="block m-0 mb-4 text-sm text-base">{{ $exam->description }}</p>
+            <p class="flex items-center gap-3 mb-8">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </span>
+                <span>Belum diselesaikan</span>
+            </p>
+            {{-- <p class="flex items-center gap-3 mb-8 text-success">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+                <span class="font-semibold">Sudah diselesaikan</span>
+            </p> --}}
+            <div class="flex justify-end">
+                <a href="" class="text-sm lg:text-base py-1.5 px-5 bg-primary text-white hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center rounded-md font-medium">
+                    Mulai Ujian
+                </a>
+            </div>
+        </div>
+        <a href="{{ url()->previous() }}" class="flex items-center gap-2 w-fit lg:gap-3 text-sm lg:text-base py-1.5 bg-white text-primary hover:text-primary-70 font-semibold">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+            </span>
+            <span>Kembali</span>
+        </a>
     @endif
 
 </div>

@@ -31,15 +31,15 @@ Route::middleware(['auth', 'user'])->group(function () {
 
     Route::controller(ExamController::class)->as('exam.')->group(function () {
         Route::get('mata-pelajaran/{classroom}/ujian/{exam}', 'show')->name('show');
-        Route::post('mata-pelajaran/{classroom_id}/ujian-baru', 'store')->name('store');
-        Route::put('mata-pelajaran/{classroom}/ujian/{exam}',  'update')->name('update');
+        Route::post('mata-pelajaran/{classroom_id}/store-exam', 'store')->name('store');
+        Route::put('mata-pelajaran/{classroom}/ujian/{exam}/update-exam',  'update')->name('update');
     });
 
     Route::controller(QuestionController::class)->as('question.')->group(function () {
-        Route::post('mata-pelajaran/{classroom}/ujian/{exam}', 'store')->name('store');
-        Route::post('mata-pelajaran/{classroom}/ujian/{exam}/upload', 'upload')->name('upload');
+        Route::post('mata-pelajaran/{classroom}/ujian/{exam}/store-question', 'store')->name('store');
+        Route::post('mata-pelajaran/{classroom}/ujian/{exam}/upload-question', 'upload')->name('upload');
         Route::put('mata-pelajaran/{classroom}/ujian/{exam}/edit-question', 'update')->name('update');
-        Route::delete('mata-pelajaran/{classroom}/ujian/{exam}/edit-question', 'destroy')->name('delete');
+        Route::delete('mata-pelajaran/{classroom}/ujian/{exam}/delete-question', 'destroy')->name('delete');
     });
     // Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
 

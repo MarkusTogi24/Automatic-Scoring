@@ -221,7 +221,7 @@
                             {{ date_format(date_create($exam->end_time),"H:i") }}
                         </p>
                         <div class="w-[12%] text-sm px-4 py-[1.25rem] text-center">
-                            <a href="" class="underline underline-offset-1 hover:font-bold">Mulai</a>
+                            <a href="{{ route('exam.show', [$classroom->id, $exam->id]) }}" class="underline underline-offset-1 hover:font-bold">Mulai</a>
                         </div>
                     @endif
                 </div>
@@ -240,7 +240,7 @@
     <script>
         $(document).ready(function () {
             $("#Classroom_Description_Content").on("keyup", function () {
-                let text = document.getElementById("Exam_Description_Content").innerText;
+                let text = document.getElementById("Classroom_Description_Content").innerText;
                 $("#classroom_description").val(text);
             });
 
