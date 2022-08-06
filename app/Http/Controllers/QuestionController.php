@@ -10,6 +10,8 @@ use App\Http\Helpers\ExamHelper;
 use App\Http\Requests\Question\StoreQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
 
+use function PHPUnit\Framework\isNan;
+
 class QuestionController extends Controller
 {
 
@@ -61,7 +63,35 @@ class QuestionController extends Controller
 
     public function upload(Request $request, Classroom $classroom, Exam $exam)
     {
-        dd($request->all());
+        $this->helper->authorizing_by_role("GURU");
+        $this->helper->authorizing_classroom_member($classroom->id);
+
+        $file = $request->file('questionFile');
+
+        $csv_file = fopen($file, 'r');
+        
+        $row_index = 0;
+
+        while (($row_data = fgetcsv($csv_file)) != false) {
+            if ($row_index != 0){
+                if (is_numeric($row_data[2])){
+                    $question = new Question;
+                    $question->exam_id = $exam->id;
+                    $question->question = $row_data[0];
+                    $question->answer_key = $row_data[1];
+                    $question->max_score = (float) $row_data[2];
+
+                    $question->save();     
+                } else {
+                    echo "Pertanyaan '".$row_data[0]. "' memiliki score yg invalid";
+                }
+            }
+
+                $row_index = $row_index + 1;
+        }
+
+        fclose($csv_file);
+        // dd($request->all());
     }
     
     public function show($classroom_id, $question_id)
