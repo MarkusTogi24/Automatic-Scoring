@@ -16,20 +16,22 @@ class UpdateExamRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'                  =>  'required',
-            'start_time'            =>  'required|date|after:now',
-            'duration'              =>  'required',
-            'description'           =>  'required',
+            'name'                  => 'required',
+            'start_time'            => 'required|date|after:now',
+            'duration'              => 'required',
+            'description'           => 'required',
+            'is_open'               => 'required'
         ];
     }
 
     public function attributes()
     {
         return [
-            'name'                  =>  'Judul ujian',
-            'start_time'            =>  'Waktu mulai',
-            'duration'              =>  'Durasi',
-            'description'           =>  'Deskripsi ujian',
+            'name'                  => 'Judul ujian',
+            'start_time'            => 'Waktu mulai',
+            'duration'              => 'Durasi',
+            'description'           => 'Deskripsi ujian',
+            'is_open'               => 'Status'
         ];
     }
 

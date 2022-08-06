@@ -32,6 +32,13 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::controller(ExamController::class)->as('exam.')->group(function () {
         Route::get('mata-pelajaran/{classroom}/ujian/{exam}', 'show')->name('show');
         Route::post('mata-pelajaran/{classroom_id}/ujian-baru', 'store')->name('store');
+        Route::put('mata-pelajaran/{classroom}/ujian/{exam}',  'update')->name('update');
+    });
+
+    Route::controller(QuestionController::class)->as('question.')->group(function () {
+        Route::post('mata-pelajaran/{classroom}/ujian/{exam}', 'store')->name('store');
+        Route::post('mata-pelajaran/{classroom}/ujian/{exam}/upload', 'upload')->name('upload');
+        Route::put('mata-pelajaran/{classroom}/ujian/{exam}/edit-question', 'update')->name('update');
     });
     // Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
 
@@ -66,8 +73,8 @@ Route::get('/classroom/{classroom_id}/members', [ClassroomAndMemberController::c
 // Route::get('/classroom/{classroom_id}/exam/{exam_id}', [ExamController::class, 'show']);
 
 // Route for updating exam information
-Route::get('/classroom/{classroom_id}/exam-update/{exam_id}', [ExamController::class, 'edit']);
-Route::put('/classroom/{classroom_id}/exam-update/{exam_id}', [ExamController::class, 'update']);
+// Route::get('/classroom/{classroom_id}/exam-update/{exam_id}', [ExamController::class, 'edit']);
+// Route::put('/classroom/{classroom_id}/exam-update/{exam_id}', [ExamController::class, 'update']);
 
 // Route for delete exam entity
 Route::delete('/classroom/{classroom_id}/exam-delete/{exam_id}', [ExamController::class, 'destroy']);
@@ -80,9 +87,9 @@ Route::get('/classroom/{classroom_id}/exam-show-question_by_id/{question_id}', [
 Route::get('/classroom/{classroom_id}/exam-show-all-question/{exam_id}', [QuestionController::class, 'index']);
 Route::get('/classroom/{classroom_id}/start-exam/{exam_id}', [QuestionController::class, 'startExam']);
 
-// Route for add question of the exam
-Route::get('/classroom/{classroom_id}/exam-add-question/{exam_id}', [QuestionController::class, 'create']);
-Route::post('/classroom/{classroom_id}/exam-add-question/{exam_id}', [QuestionController::class, 'store']);
+// // Route for add question of the exam
+// Route::get('/classroom/{classroom_id}/exam-add-question/{exam_id}', [QuestionController::class, 'create']);
+// Route::post('/classroom/{classroom_id}/exam-add-question/{exam_id}', [QuestionController::class, 'store']);
 
 // Route for update question of the exam
 Route::get('/classroom/{classroom_id}/exam-edit-question/{question_id}', [QuestionController::class, 'edit']);
@@ -91,7 +98,7 @@ Route::put('/classroom/{classroom_id}/exam-edit-question/{question_id}', [Questi
 // Route for delete exam question
 Route::get('/classroom/{classroom_id}/exam-delete-question/{question_id}', [QuestionController::class, 'destroy']);
 
-Route::resource('/question', QuestionController::class);
+// Route::resource('/question', QuestionController::class);
 Route::resource('/member', ClassroomAndMemberController::class);
 
 Route::fallback(function () {

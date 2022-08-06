@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Helpers\ExamHelper;
 use App\Models\Exam;
 use App\Models\Question;
+use App\Models\Classroom;
 use Illuminate\Http\Request;
+use App\Http\Helpers\ExamHelper;
+use App\Http\Requests\Question\StoreQuestionRequest;
+use App\Http\Requests\Question\UpdateQuestionRequest;
 
 class QuestionController extends Controller
 {
@@ -17,12 +20,7 @@ class QuestionController extends Controller
         $this->helper = new ExamHelper;
         $this->middleware('auth');
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index($classroom_id, $exam_id)
     {
         //
@@ -33,12 +31,7 @@ class QuestionController extends Controller
 
         return $questions;
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create($classroom_id, $exam_id)
     {
         //
@@ -47,35 +40,30 @@ class QuestionController extends Controller
 
         return view ('add_question', compact('classroom_id', 'exam_id'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store($classroom_id, $exam_id, Request $request)
+    
+    public function store(StoreQuestionRequest $request, Classroom $classroom, Exam $exam)
     {
-        //
         $this->helper->authorizing_by_role("GURU");
-        $this->helper->authorizing_classroom_member($classroom_id);
+        $this->helper->authorizing_classroom_member($classroom->id);
+
+        $validated = $request->validated();
 
         $question = new Question;
-        $question->exam_id = $exam_id;
-        $question->question = $request->question;
-        $question->answer_key = $request->answer_key;
-        $question->max_score = $request->max_score;
+        $question->exam_id      = $exam->id;
+        $question->question     = $validated['question'];
+        $question->answer_key   = $validated['answer_key'];
+        $question->max_score    = $validated['max_score'];
         $question->save();
 
-        return $question;
+        return redirect()->route('exam.show', [$classroom, $exam])
+            ->with("success","Data soal berhasil disimpan!");
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function upload(Request $request, Classroom $classroom, Exam $exam)
+    {
+        dd($request->all());
+    }
+    
     public function show($classroom_id, $question_id)
     {
         //
@@ -85,13 +73,7 @@ class QuestionController extends Controller
 
         return $question;
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($classroom_id, $question_id)
     {
         //
@@ -101,35 +83,25 @@ class QuestionController extends Controller
         $question = Question::find($question_id);
         return view ('update_question', compact('classroom_id', 'question_id', 'question'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $classroom_id, $question_id)
+    
+    public function update(UpdateQuestionRequest $request, Classroom $classroom, Exam $exam)
     {
-        //
         $this->helper->authorizing_by_role("GURU");
-        $this->helper->authorizing_classroom_member($classroom_id);
+        $this->helper->authorizing_classroom_member($classroom->id);
         
-        $question = Question::find($question_id);
-        $question->question = $request->question;
-        $question->answer_key = $request->answer_key;
-        $question->max_score = $request->max_score;
+        $validated = $request->validated();
+
+        $question             = Question::find($validated['question_id']);
+        $question->question   = $validated['question'];
+        $question->answer_key = $validated['answer_key'];
+        $question->max_score  = $validated['max_score'];
+        
         $question->save();
 
-        return $question;
+        return redirect()->route('exam.show', [$classroom, $exam])
+            ->with("success","Perubahan berhasil disimpan!");
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($classroom_id, $question_id)
     {
         //

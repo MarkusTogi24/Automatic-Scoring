@@ -240,7 +240,8 @@
     <script>
         $(document).ready(function () {
             $("#Classroom_Description_Content").on("keyup", function () {
-                $("#classroom_description").val($(this).text());
+                let text = document.getElementById("Exam_Description_Content").innerText;
+                $("#classroom_description").val(text);
             });
 
             $("#Classroom_Description_Content").on('focusin', function () { 
@@ -258,7 +259,8 @@
             });
 
             $("#Exam_Description_Content").on("keyup", function () {
-                $("#exam_description").val($(this).text());
+                let text = document.getElementById("Exam_Description_Content").innerText;
+                $("#exam_description").val(text);
             });
 
             $("#Exam_Description_Content").on('focusin', function () { 
