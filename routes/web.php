@@ -39,6 +39,7 @@ Route::middleware(['auth', 'user'])->group(function () {
         Route::post('mata-pelajaran/{classroom}/ujian/{exam}', 'store')->name('store');
         Route::post('mata-pelajaran/{classroom}/ujian/{exam}/upload', 'upload')->name('upload');
         Route::put('mata-pelajaran/{classroom}/ujian/{exam}/edit-question', 'update')->name('update');
+        Route::delete('mata-pelajaran/{classroom}/ujian/{exam}/edit-question', 'destroy')->name('delete');
     });
     // Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
 

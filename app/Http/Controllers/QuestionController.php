@@ -102,14 +102,16 @@ class QuestionController extends Controller
             ->with("success","Perubahan berhasil disimpan!");
     }
     
-    public function destroy($classroom_id, $question_id)
+    public function destroy(Request $request, Classroom $classroom, Exam $exam)
     {
-        //
         $this->helper->authorizing_by_role("GURU");
-        $this->helper->authorizing_classroom_member($classroom_id);
+        $this->helper->authorizing_classroom_member($classroom->id);
         
-        $question = Question::find($question_id);
+        $question = Question::find($request->question_id);
         $question->delete();
+
+        return redirect()->route('exam.show', [$classroom, $exam])
+            ->with("success","Data soal berhasil dihapus!");
     }
 
     public function startExam($classroom_id, $exam_id){

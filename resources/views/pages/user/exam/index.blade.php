@@ -8,6 +8,7 @@
         showAddQuestionPopUp    : @if($errors->hasBag('create_question')) true @else false @endif,
         showUploadQuestionPopUp : @if($errors->hasBag('upload_question')) true @else false @endif,
         showEditQuestionPopUp   : @if($errors->hasBag('edit_question')) true @else false @endif,
+        showDeleteQuestionPopUp : false,
         switchSection           : true,
     }">
 
@@ -91,8 +92,8 @@
                                 class="edit-question-btn block w-20 lg:w-24 py-1 text-sm lg:text-base rounded bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-primary-30 text-center text-white">
                                 Edit
                             </button>
-                            <button type="button" 
-                                class="block w-20 lg:w-24 py-1 text-sm lg:text-base rounded bg-danger hover:bg-danger-70 focus:ring-2 focus:outline-none focus:ring-danger-30 text-center text-white">
+                            <button type="button" id="deleteQuestionBtn_{{ $question->id }}" x-on:click="showDeleteQuestionPopUp = true"
+                                class="delete-question-btn block w-20 lg:w-24 py-1 text-sm lg:text-base rounded bg-danger hover:bg-danger-70 focus:ring-2 focus:outline-none focus:ring-danger-30 text-center text-white">
                                 Hapus
                             </button>
                         </div>
@@ -356,7 +357,7 @@
                             <!-- QUESTION SCORE -->
                             <div class="">
                                 <p class="block mb-2 text-sm font-medium text-gray-900">{{ __('Bobot soal') }}</p>
-                                <input type="number" min="0" id="max_score" name="max_score" value="{{ old('max_score') }}" placeholder="100"
+                                <input type="number" min="0" id="max_score" name="max_score" value="{{ old('max_score') }}" placeholder="0"
                                     class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
                                     autocomplete="off">
                                     @error('max_score', 'create_question')
@@ -552,7 +553,7 @@
                             <!-- QUESTION SCORE -->
                             <div class="">
                                 <p class="block mb-2 text-sm font-medium text-gray-900">{{ __('Bobot soal') }}</p>
-                                <input type="number" min="0" id="edit_max_score" name="max_score" value="{{ old('max_score') }}" placeholder="100"
+                                <input type="number" min="0" id="edit_max_score" name="max_score" value="{{ old('max_score') }}" placeholder="0"
                                     class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
                                     autocomplete="off">
                                     @error('max_score', 'edit_question')
@@ -563,7 +564,55 @@
                         <!-- SUBMIT BUTTON -->
                         <div class="w-full">
                             <button type="submit" class="w-full text-white bg-primary hover:bg-primary-70 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
-                                {{ __('Edit') }}
+                                {{ __('Hapus') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- "DELETE QUESTION" POP UP FOR TEACHER -->
+        <div class="fixed z-[2220] inset-0"
+            x-cloak x-show="showDeleteQuestionPopUp">
+            <div class="absolute z-[2222] inset-0 bg-black bg-opacity-30 flex justify-center items-center py-4">
+                <div class="bg-white w-10/12 md:w-3/5 lg:1/2 xl:w-2/5 rounded-md p-5">
+                    <!-- POP UP HEADER -->
+                    <div class="flex justify-between items-center mb-6">
+                        <p class="block m-0 text-lg font-semibold text-gray-900 tracking-wide">
+                            Hapus Soal
+                        </p>
+                        <button type="button" class="block border-none outline-none text-gray-900 hover:text-gray-800 font-medium"
+                            x-on:click="showDeleteQuestionPopUp = false">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- POP UP BODY -->
+                    <div class="w-full max-h-96 py-2 overflow-y-auto mb-6 custom-scrollbar">
+                        <!-- QUESTION TEXT -->
+                        <div class="">
+                            <p class="block mb-2 text-base font-bold text-gray-900">Anda akan menghapus soal berikut : </p>
+                            <p class="block mb-2 text-sm font-semibold text-gray-900">Pertanyaan :</p>
+                            <p class="block mb-2 text-sm font-medium text-gray-900" id="delete_question_text"></p>
+                            <p class="block mb-2 text-sm font-semibold text-gray-900">Bobot nilai :</p>
+                            <p class="block mb-2 text-sm font-medium text-gray-900" id="delete_question_score"></p>
+                            <p class="block mb-2 text-sm font-semibold text-gray-900">Jawaban :</p>
+                            <p class="block mb-2 text-sm font-medium text-gray-900" id="delete_question_answer"></p>
+                            <p class="block text-base font-bold text-gray-900">Anda yakin untuk melanjutkan aksi ini?</p>
+                        </div>
+                    </div>
+                    <!-- SUBMIT BUTTON -->
+                    <form action="{{ route('question.delete', [$classroom->id, $exam->id]) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <div class="w-full">
+                            <button type="submit" name="question_id" id="delete_question_id" class="w-full text-white bg-danger hover:bg-danger-70 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
+                                {{ __('Hapus') }}
                             </button>
                         </div>
                     </form>
@@ -835,9 +884,6 @@
                 let questionText    = document.getElementById("questionText_"+id).innerText;
                 let questionAnswer  = document.getElementById("questionAnswer_"+id).innerText;
                 let questionScore   = parseInt(document.getElementById("questionScore_"+id).innerText.split(" ")[3]);
-                console.log(questionText);
-                console.log(questionAnswer);
-                console.log(questionScore);
 
                 $("#edit_question_id").val(id);
                 $("#Edit_Question_Text_Content").text(questionText);
@@ -845,6 +891,20 @@
                 $("#Edit_Question_Answer_Content").text(questionAnswer);
                 $("#edit_question_answer").val(questionAnswer);
                 $("#edit_max_score").val(questionScore);
+
+            });
+
+            $(".delete-question-btn").click(function (e) { 
+                e.preventDefault();
+                let id = $(this).attr("id").split("_")[1];
+                let questionText    = document.getElementById("questionText_"+id).innerText;
+                let questionAnswer  = document.getElementById("questionAnswer_"+id).innerText;
+                let questionScore   = parseInt(document.getElementById("questionScore_"+id).innerText.split(" ")[3]);
+
+                $("#delete_question_id").val(id);
+                $("#delete_question_text").text(questionText);
+                $("#delete_question_answer").text(questionAnswer);
+                $("#delete_question_score").text(questionScore);
 
             });
         });
