@@ -2,81 +2,82 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Exam;
+use App\Models\Question;
 use Illuminate\Http\Request;
+use App\Models\StudentAndQuestion;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 class StudentAndQuestionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         //
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create()
     {
         //
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    
+    public function store(Request $request, Exam $exam)
     {
-        //
-    }
+        $entity = new StudentAndQuestion;
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+        $entity->question_id    = $request->question_id;
+        $entity->answer         = $request->answer;
+        $entity->student_id     = Auth::user()->id;
+        $entity->score          = 0;
+        $entity->save();
+
+        $questions = Question::select("question.*", "student_and_question.answer as answer", "student_and_question.id as answer_id")
+            ->leftJoin('student_and_question', function ($join) {
+                $join->on('question.id', 'student_and_question.question_id');
+                $join->on('student_and_question.student_id', DB::raw(Auth::user()->id));
+            })                   
+            ->where('question.exam_id', $exam->id)
+            ->orderBy('id')
+            ->get();
+
+        return Response::json($questions);
+    }
+    
     public function show($id)
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($id)
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    
+    public function update(Request $request, Exam $exam)
     {
-        //
-    }
+        $entity = StudentAndQuestion::firstWhere('id', $request->id);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+        $entity->question_id    = $request->question_id;
+        $entity->answer         = $request->answer;
+        $entity->student_id     = Auth::user()->id;
+        $entity->score          = 0;
+        $entity->save();
+
+        $questions = Question::select("question.*", "student_and_question.answer as answer", "student_and_question.id as answer_id")
+            ->leftJoin('student_and_question', function ($join) {
+                $join->on('question.id', 'student_and_question.question_id');
+                $join->on('student_and_question.student_id', DB::raw(Auth::user()->id));
+            })                   
+            ->where('question.exam_id', $exam->id)
+            ->orderBy('id')
+            ->get();
+
+        return Response::json($questions);
+        
+        // return compact('answer_id', 'answer');
+    }
+    
     public function destroy($id)
     {
         //

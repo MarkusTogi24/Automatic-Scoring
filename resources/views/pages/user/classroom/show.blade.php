@@ -221,7 +221,9 @@
                             {{ date_format(date_create($exam->end_time),"H:i") }}
                         </p>
                         <div class="w-[12%] text-sm px-4 py-[1.25rem] text-center">
-                            <a href="{{ route('exam.show', [$classroom->id, $exam->id]) }}" class="underline underline-offset-1 hover:font-bold">Mulai</a>
+                            <a href="{{ route('exam.show', [$classroom->id, $exam->id]) }}" class="underline underline-offset-1 hover:font-bold">
+                                {{ $exam->is_open ? 'Mulai' : 'Lihat' }}
+                            </a>
                         </div>
                     @endif
                 </div>

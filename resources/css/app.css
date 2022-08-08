@@ -54,5 +54,11 @@
     .enabledBtn {
         @apply bg-primary hover:bg-primary-70 focus:ring-4 focus:outline-none focus:ring-blue-300;
     }
+    .filledNumberBtn{
+        @apply bg-primary text-white;
+    }
+    .emptyNumberBtn{
+        @apply bg-white text-primary;
+    }
 }
 

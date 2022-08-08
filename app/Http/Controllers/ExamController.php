@@ -10,10 +10,14 @@ use App\Models\Question;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Http\Helpers\ExamHelper;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Helpers\ClassroomHelper;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Exam\StoreExamRequest;
 use App\Http\Requests\Exam\UpdateExamRequest;
+use App\Models\StudentAndQuestion;
+use App\Models\StudentAndScore;
 
 class ExamController extends Controller
 {
@@ -84,9 +88,15 @@ class ExamController extends Controller
             ->where('exam_id', $exam->id)
             ->get();
 
-        $total_score = $questions->sum('max_score');
+            $total_score = $questions->sum('max_score');
 
-        return view('pages.user.exam.index', compact('classroom', 'exam', 'questions', 'duration', 'total_score'));
+        $questions_id = $questions->pluck('id');
+        $student_answer_count = StudentAndQuestion::query()
+            ->where('student_id', Auth::user()->id)
+            ->whereIn('question_id', $questions_id)
+            ->count();
+
+        return view('pages.user.exam.index', compact('classroom', 'exam', 'questions', 'duration', 'total_score', 'student_answer_count'));
     }
     
     public function edit($classroom_id, $exam_id)
@@ -145,5 +155,27 @@ class ExamController extends Controller
         $exam->save();
 
         return $exam;
+    }
+
+    public function start(Classroom $classroom, Exam $exam){
+        $this->exam_helper->authorizing_exam_question_access_for_student($classroom->id, $exam->id);
+
+        $questions = Question::select("question.*", "student_and_question.answer as answer", "student_and_question.id as answer_id")
+            ->leftJoin('student_and_question', function ($join) {
+                $join->on('question.id', 'student_and_question.question_id');
+                $join->on('student_and_question.student_id', DB::raw(Auth::user()->id));
+            })                   
+            ->where('question.exam_id', $exam->id)
+            ->orderBy('id')
+            ->get();
+
+        return view ('pages.user.exam.start', compact('questions', 'exam', 'classroom'));
+    }
+
+    public function save(Request $request, Classroom $classroom, Exam $exam){
+        $student_exam = new StudentAndScore;
+        $student_exam->exam_id      = $exam->id;
+        $student_exam->student_id   = Auth::user()->id;
+        dd($student_exam);
     }
 }

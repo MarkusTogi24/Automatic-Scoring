@@ -649,12 +649,19 @@
                 <span class="font-semibold">Sudah diselesaikan</span>
             </p> --}}
             <div class="flex justify-end">
-                <a href="" class="text-sm lg:text-base py-1.5 px-5 bg-primary text-white hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center rounded-md font-medium">
-                    Mulai Ujian
-                </a>
+                @if ($exam->is_open)
+                    <a href="{{ route('exam.start', [$classroom->id, $exam->id]) }}" 
+                        class="text-sm lg:text-base py-1.5 px-5 text-white bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center rounded-md font-medium">
+                        {{ $student_answer_count > 0 ? 'Lanjutkan Ujian' : 'Mulai Ujian' }}
+                    </a>
+                @else
+                    <button type="button" disabled class="text-sm lg:text-base text-white py-1.5 px-5 disabledBtn text-center rounded-md font-medium">
+                        Ujian Sudah Ditutup
+                    </button>
+                @endif
             </div>
         </div>
-        <a href="{{ url()->previous() }}" class="flex items-center gap-2 w-fit lg:gap-3 text-sm lg:text-base py-1.5 bg-white text-primary hover:text-primary-70 font-semibold">
+        <a href="{{ route('classroom.show', $classroom->id) }}" class="flex items-center gap-2 w-fit lg:gap-3 text-sm lg:text-base py-1.5 bg-white text-primary hover:text-primary-70 font-semibold">
             <span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />

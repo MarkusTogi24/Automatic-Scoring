@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\ClassroomAndMemberController;
-use App\Http\Controllers\ClassroomController;
-use App\Http\Controllers\ExamController;
-use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\ClassroomAndMemberController;
+use App\Http\Controllers\StudentAndQuestionController;
 
 
 
@@ -33,6 +34,8 @@ Route::middleware(['auth', 'user'])->group(function () {
         Route::get('mata-pelajaran/{classroom}/ujian/{exam}', 'show')->name('show');
         Route::post('mata-pelajaran/{classroom_id}/store-exam', 'store')->name('store');
         Route::put('mata-pelajaran/{classroom}/ujian/{exam}/update-exam',  'update')->name('update');
+        Route::get('mata-pelajaran/{classroom}/mulai-ujian/{exam}', 'start')->name('start');
+        Route::post('mata-pelajaran/{classroom}/mulai-ujian/{exam}', 'save')->name('save');
     });
 
     Route::controller(QuestionController::class)->as('question.')->group(function () {
@@ -41,7 +44,11 @@ Route::middleware(['auth', 'user'])->group(function () {
         Route::put('mata-pelajaran/{classroom}/ujian/{exam}/edit-question', 'update')->name('update');
         Route::delete('mata-pelajaran/{classroom}/ujian/{exam}/delete-question', 'destroy')->name('delete');
     });
-    // Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
+
+    Route::controller(StudentAndQuestionController::class)->as('student_answer.')->group(function () {
+        Route::post('store-student-answer/{exam}', 'store')->name('store');
+        Route::post('update-student-answer/{exam}', 'update')->name('update');
+    });
 
     
 });
