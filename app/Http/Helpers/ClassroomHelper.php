@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class ClassroomHelper extends GeneralHelper{
 
     function generate_enrollment_key(){
-        $characters = "1234567890!@#$%^&*()QWERTYUIOPASDFGHJKLZXCVBNM[];',./-=qwertyuiopasdfghjklzxcvbnm{}:<>?";
+        $characters = "1234567890QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
         $random_string = "";
         $is_get_enrollment_key = false;
 
@@ -29,8 +29,8 @@ class ClassroomHelper extends GeneralHelper{
 
     function is_key_exist($temp_key){
 
-        $existing_enrollment_key_list = $this->get_col_from_table("enrollment_key", "classroom");
-        return in_array($temp_key, $existing_enrollment_key_list);
+        $is_exist = Classroom::where("enrollment_key", $temp_key)->first();
+        return $is_exist != null;
     }
 
     function get_class_id_from_enrollment_key($enrollment_key){

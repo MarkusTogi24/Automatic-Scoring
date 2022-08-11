@@ -6,7 +6,6 @@ use App\Models\Exam;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Models\ClassroomAndMember;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Helpers\ClassroomHelper;
 use Illuminate\Support\Facades\Validator;
@@ -27,14 +26,12 @@ class ClassroomController extends Controller
     public function index()
     {
         $this->helper->authorizing_by_role(["GURU", "SISWA"]);
-        
-        $classrooms = DB::select(DB::raw("SELECT * FROM classroom LEFT JOIN classroom_and_member ON classroom.id = classroom_and_member.classroom_id WHERE classroom_and_member.member_id = ".Auth::user()->id.";"));
-        // $classrooms = Classroom::query()
-        //     ->leftJoin('classroom_and_member', 'classroom.id', '=', 'classroom_and_member.classroom_id')
-        //     ->where('classroom_and_member.member_id', Auth::user()->id)
-        //     ->get();
 
-        // dd($classrooms);
+        $classrooms = Classroom::select("*")
+        ->leftJoin("classroom_and_member", "classroom.id", "=", "classroom_and_member.classroom_id")
+        ->where("classroom_and_member.member_id", Auth::user()->id)
+        ->get();
+
         return view('pages.user.classroom.index', compact('classrooms'));
     }
     
@@ -73,15 +70,10 @@ class ClassroomController extends Controller
         $this->helper->authorizing_classroom_member($id);
 
         $classroom = Classroom::find($id);
-
-        $exams = DB::select(DB::raw("SELECT * FROM exam WHERE class_id = ".$id." ORDER BY start_time DESC;"));
-
-        // $exams = Exam::query()
-        //     ->where('class_id', $id)
-        //     ->orderBy('start_time', 'desc')
-        //     ->get();
-
-        // dd($classroom, $exams);
+        $exams = Exam::select("*")
+            ->where("class_id", $id)
+            ->orderBy("start_time", "desc")
+            ->get();
         
         return view('pages.user.classroom.show', compact('classroom', 'exams'));
     }
