@@ -82,4 +82,30 @@ class StudentAndQuestionController extends Controller
     {
         //
     }
+
+    public function saveAnswer($exam_id, $question_id, $answer){
+        $entity = new StudentAndQuestion;
+
+        $entity->question_id = $question_id;
+        $entity->answer = $answer;
+        $entity->student_id = Auth::user()->id;
+        $entity->score = 1;
+        $entity->save();
+
+        $answer_id = $entity->id;
+
+        $total_score = StudentAndQuestion::select("SUM(score)")->where('exam_id', $exam_id)->get();
+        
+        return compact('answer_id', 'answer');
+    }
+    
+    public function updateAnswer($answer_id, $answer){
+        $entity = StudentAndQuestion::find($answer_id);
+
+        $entity->answer = $answer;
+        $entity->score = 1;
+        $entity->save();
+
+        return compact('answer_id', 'answer');
+    }
 }
