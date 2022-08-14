@@ -4,7 +4,10 @@ namespace App\Http\Helpers;
 
 use Carbon\Carbon;
 use App\Models\Exam;
+use App\Models\StudentAndQuestion;
+use App\Models\StudentAndScore;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ExamHelper extends ClassroomHelper{
 
@@ -48,6 +51,21 @@ class ExamHelper extends ClassroomHelper{
             $duration["basic_format"] .= "0".strval($minutes) ;
 
         return $duration;
+    }
+
+    function save_total_score($exam_id){
+        $total_score_arr = StudentAndQuestion
+            ::select(DB::raw("sum(student_and_question.score) as score"))
+            ->leftJoin("question", "question.id", '=', "student_and_question.question_id")
+            ->where("question.exam_id", $exam_id)
+            ->where("student_and_question.student_id", Auth::user()->id)
+            ->get();
+
+            $total_score_entity = new StudentAndScore;
+            $total_score_entity->exam_id = $exam_id;
+            $total_score_entity->student_id = Auth::user()->id;
+            $total_score_entity->total_score = $total_score_arr[0]->score;
+            $total_score_entity->save();
     }
 }
 
