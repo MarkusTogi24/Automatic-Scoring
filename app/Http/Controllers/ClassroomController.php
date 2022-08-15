@@ -6,6 +6,7 @@ use App\Models\Exam;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Models\ClassroomAndMember;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Helpers\ClassroomHelper;
 use Illuminate\Support\Facades\Validator;
@@ -70,6 +71,7 @@ class ClassroomController extends Controller
         $this->helper->authorizing_classroom_member($id);
 
         $classroom = Classroom::find($id);
+
         $exams = Exam::select("*")
             ->where("class_id", $id)
             ->orderBy("start_time", "desc")

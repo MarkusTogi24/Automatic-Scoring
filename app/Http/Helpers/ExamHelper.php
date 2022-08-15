@@ -54,18 +54,17 @@ class ExamHelper extends ClassroomHelper{
     }
 
     function save_total_score($exam_id){
-        $total_score_arr = StudentAndQuestion
-            ::select(DB::raw("sum(student_and_question.score) as score"))
+        $total_score_arr = StudentAndQuestion::select(DB::raw("sum(student_and_question.score) as score"))
             ->leftJoin("question", "question.id", '=', "student_and_question.question_id")
             ->where("question.exam_id", $exam_id)
             ->where("student_and_question.student_id", Auth::user()->id)
             ->get();
 
-            $total_score_entity = new StudentAndScore;
-            $total_score_entity->exam_id = $exam_id;
-            $total_score_entity->student_id = Auth::user()->id;
-            $total_score_entity->total_score = $total_score_arr[0]->score;
-            $total_score_entity->save();
+        $total_score_entity = new StudentAndScore;
+        $total_score_entity->exam_id = $exam_id;
+        $total_score_entity->student_id = Auth::user()->id;
+        $total_score_entity->total_score = $total_score_arr[0]->score;
+        $total_score_entity->save();
     }
 }
 

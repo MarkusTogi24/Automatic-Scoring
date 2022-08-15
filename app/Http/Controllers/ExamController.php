@@ -96,7 +96,13 @@ class ExamController extends Controller
             ->whereIn('question_id', $questions_id)
             ->count();
 
-        return view('pages.user.exam.index', compact('classroom', 'exam', 'questions', 'duration', 'total_score', 'student_answer_count'));
+        $student_exam = StudentAndScore::query()
+            ->where('exam_id', $exam->id)
+            ->where('student_id', Auth::user()->id)
+            ->count();
+
+        return view('pages.user.exam.index', 
+            compact('classroom', 'exam', 'questions', 'duration', 'total_score', 'student_answer_count', 'student_exam'));
     }
     
     public function edit($classroom_id, $exam_id)
@@ -173,9 +179,47 @@ class ExamController extends Controller
     }
 
     public function save(Request $request, Classroom $classroom, Exam $exam){
+
+        if(isset($request->answer_text)){
+            if( isset($request->answer_id) ){
+                $entity = StudentAndQuestion::firstWhere('id', $request->answer_id);
+                $entity->question_id    = $request->question_id;
+                $entity->answer         = $request->answer_text;
+                $entity->student_id     = $request->student_id;
+                $entity->score          = 0;
+                $entity->save();
+            }else{
+                $entity = new StudentAndQuestion;
+                $entity->question_id    = $request->question_id;
+                $entity->answer         = $request->answer_text;
+                $entity->student_id     = $request->student_id;
+                $entity->score          = 0;
+                $entity->save();
+            }
+        }
+
+        $questions = Question::query()
+            ->where('exam_id', $exam->id)
+            ->get('id');
+
+        $student_score = StudentAndQuestion::query()
+            ->whereIn('question_id', $questions)
+            ->where('student_id', Auth::user()->id)
+            ->sum('score');
+
         $student_exam = new StudentAndScore;
         $student_exam->exam_id      = $exam->id;
         $student_exam->student_id   = Auth::user()->id;
-        dd($student_exam);
+        $student_exam->total_score  = $student_score;
+        $student_exam->save();
+        
+        return redirect()->route('exam.show', [$classroom, $exam])
+            ->with("success","Seluruh jawaban anda pada {$exam->name} - {$classroom->name} berhasil dikirimkan!");
+    }
+
+    public function closed(Classroom $classroom, Exam $exam)
+    {
+        return redirect()->route('exam.show', [$classroom, $exam])
+            ->with("warning","{$exam->name} - {$classroom->name} telah ditutup, seluruh jawaban anda berhasil disimpan!");
     }
 }

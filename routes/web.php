@@ -32,6 +32,7 @@ Route::middleware(['auth', 'user'])->group(function () {
 
     Route::controller(ExamController::class)->as('exam.')->group(function () {
         Route::get('mata-pelajaran/{classroom}/ujian/{exam}', 'show')->name('show');
+        Route::get('mata-pelajaran/{classroom}/ujian/{exam}/exam-closed', 'closed');
         Route::post('mata-pelajaran/{classroom_id}/store-exam', 'store')->name('store');
         Route::put('mata-pelajaran/{classroom}/ujian/{exam}/update-exam',  'update')->name('update');
         Route::get('mata-pelajaran/{classroom}/mulai-ujian/{exam}', 'start')->name('start');

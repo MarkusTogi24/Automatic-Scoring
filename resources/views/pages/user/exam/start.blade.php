@@ -33,8 +33,9 @@
                 <span class="hidden xl:block xl:m-0">Kembali</span>
             </button>
         </div>
-        <p class="block m-0 text-sm xl:text-base xl:text-center">Ujian Tengah Semester - Bahasa Indonesia</p>
-        <div class="hidden xl:block">
+        <p class="block m-0 text-sm xl:text-base xl:text-center">{{ $exam->name }} - {{ $classroom->name }}</p>
+        {{-- <div class="hidden xl:block"> --}}
+        <div class="hidden">
             <p class="hidden" id="end_time">{{ $exam->end_time }}</p>
             <p id="timerContainer" class="tracking-wide text-right">
                 <span>Sisa Waktu :</span>
@@ -57,16 +58,23 @@
                 x-cloak x-show="showMobilePreview" x-on:click.outside="showMobilePreview = false">
                 <div class="w-fit grid grid-cols-5 items-start gap-3 h-fit">
                     @for ($i = 0; $i < $questions->count(); $i++)
-                        <button type="button" id="mobileQuestionBtn_{{ $i }}" 
-                            class="question-btn number-question-btn flex w-9 h-9 rounded items-center justify-center border border-primary
-                                {{ $questions[$i]->answer == "" ? 'emptyNumberBtn' : 'filledNumberBtn' }}">
-                            <p class="block m-0 text-sm font-semibold">{{ $i+1 }}</p>
-                        </button>
+                        @if ($i == 0)
+                            <button type="button" id="mobileQuestionBtn_{{ $i }}" disabled x-on:click="showMobilePreview = false"
+                                class="question-btn number-question-btn flex w-9 h-9 rounded items-center justify-center border border-primary activeNumberBtn">
+                                <p class="block m-0 text-sm font-semibold">{{ $i+1 }}</p>
+                            </button>
+                        @else
+                            <button type="button" id="mobileQuestionBtn_{{ $i }}" x-on:click="showMobilePreview = false"
+                                class="question-btn number-question-btn flex w-9 h-9 rounded items-center justify-center border border-primary
+                                    {{ $questions[$i]->answer == "" ? 'emptyNumberBtn' : 'filledNumberBtn' }}">
+                                <p class="block m-0 text-sm font-semibold">{{ $i+1 }}</p>
+                            </button>
+                        @endif
                     @endfor
                 </div>
             </div>
         </div>
-        <p id="mobileTimerContainer" class="tracking-wide text-sm text-right">
+        <p id="mobileTimerContainer" class="hidden tracking-wide text-sm text-right">
             <span>Sisa Waktu :</span>
             <span id="mobileTimer">00:00:00</span>
         </p>
@@ -78,16 +86,25 @@
             <div class="relative w-fit h-fit max-h-[calc(100vh-4.25rem-3rem-1.5rem)] overflow-y-auto custom-scrollbar rounded-md p-3 bg-white border-2 border-primary">
                 <div class="w-fit grid grid-cols-5 items-start gap-3 h-fit">
                     @for ($i = 0; $i < $questions->count(); $i++)
-                        <button type="button" id="questionBtn_{{ $i }}" 
-                            class="question-btn number-question-btn flex w-10 h-10 rounded items-center justify-center border border-primary
-                                {{ $questions[$i]->answer == "" ? 'emptyNumberBtn' : 'filledNumberBtn' }}">
-                            <p class="block m-0 text-sm font-semibold">{{ $i+1 }}</p>
-                        </button>
+                        @if ($i==0)
+                            <button type="button" id="questionBtn_{{ $i }}" disabled
+                                class="question-btn number-question-btn flex w-10 h-10 rounded items-center justify-center border border-primary activeNumberBtn">
+                                <p class="block m-0 text-sm font-semibold">{{ $i+1 }}</p>
+                            </button>
+                        @else
+                            <button type="button" id="questionBtn_{{ $i }}" 
+                                class="question-btn number-question-btn flex w-10 h-10 rounded items-center justify-center border border-primary
+                                    {{ $questions[$i]->answer == "" ? 'emptyNumberBtn' : 'filledNumberBtn' }}">
+                                <p class="block m-0 text-sm font-semibold">{{ $i+1 }}</p>
+                            </button>
+                        @endif
                     @endfor
                 </div>
             </div>
         </div>
+
         <div class="absolute top-[6.5rem] xl:top-[4.25rem] min-h-[calc(100vh-6.5rem)] xl:min-h-[calc(100vh-4.25rem)] w-full xl:w-[calc(100vw-6.5rem-12.5rem-31px)] xl:left-[calc(19rem+14px)] p-4">
+            {{-- HIDDEN QUESTION DATA --}}
             <div class="text-xs hidden" id="questionsData">
                 <p id="questionCount">{{ $questions->count() }}</p>
                 <p id="user_id">{{ Auth::user()->id }}</p>
@@ -145,6 +162,7 @@
                     </button>
                     <form action="{{ route('exam.save', [$classroom->id, $exam->id]) }}" method="POST">
                         @csrf @method('POST')
+                        <div class="" id="additionalFormFields"></div>
                         <button type="submit" class="block w-36 text-white bg-primary hover:bg-primary-70 border border-primary focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
                             Akhiri Ujian
                         </button>
@@ -193,12 +211,14 @@
     <script>
         // Coloring the button if the question has answer
         function colorButton(index){
-            if($("#questionBtn_"+index).hasClass("emptyNumberBtn")){
-                $("#questionBtn_"+index).removeClass("emptyNumberBtn");
+            if($("#questionBtn_"+index).hasClass("activeNumberBtn")){
+                $("#questionBtn_"+index).attr("disabled", false);
+                $("#questionBtn_"+index).removeClass("activeNumberBtn");
                 $("#questionBtn_"+index).addClass("filledNumberBtn");
             }
-            if($("#mobileQuestionBtn_"+index).hasClass("emptyNumberBtn")){
-                $("#mobileQuestionBtn_"+index).removeClass("emptyNumberBtn");
+            if($("#mobileQuestionBtn_"+index).hasClass("activeNumberBtn")){
+                $("#mobileQuestionBtn_"+index).attr("disabled", false);
+                $("#mobileQuestionBtn_"+index).removeClass("activeNumberBtn");
                 $("#mobileQuestionBtn_"+index).addClass("filledNumberBtn");
             }
         }
@@ -268,7 +288,7 @@
                         + "<button type=\"button\" id=\"prevQuestion_"+(questionCount-2)+"\" class=\"question-btn block w-40 text-primary bg-white hover:bg-primary-10 border border-primary focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-md text-sm px-5 py-2.5 text-center\">"
                             + "Sebelumnya"
                         + "</button>"
-                        + "<button type=\"button\" x-on:click=\"showEndExamPopUp = true\" class=\"block w-40 text-white bg-primary hover:bg-primary-70 border border-primary focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold uppercase tracking-widest rounded-md text-base px-5 py-3 text-center\">"
+                        + "<button type=\"button\" id=\"submitExamAnswer\" x-on:click=\"showEndExamPopUp = true\" class=\"block w-40 text-white bg-primary hover:bg-primary-70 border border-primary focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold uppercase tracking-widest rounded-md text-base px-5 py-3 text-center\">"
                             + "SUBMIT"
                         + "</button>"
                     + "</div>"
@@ -289,6 +309,16 @@
             $("#questionContainer").html(content);
         }
 
+        // REDIRECT ACTIONS
+        function redirectAction(response, this_id){
+            if(response["exam_status"] === "closed"){
+                window.location.href = "/mata-pelajaran/"+response["classroom_id"]+"/ujian/"+response["exam_id"]+"/exam-closed";
+            }else{
+                refreshData(response);
+                colorButton(this_id);
+            }
+        }
+
         // Load loading indicator on AJAX process
         function loadLoadingIndicator() {
             $("#questionContainer").empty();
@@ -305,10 +335,109 @@
             $("#questionContainer").html(loading_indicator);
         }
 
+        // MAIN PROCESS
+        function processQuestion(index, questionCount, exam_id){
+            // Getting question data by the index
+            let question_id     = document.getElementById("question_"+index+"_id").innerText;
+            let question        = document.getElementById("question_"+index+"_question").innerText;
+            let answer_id       = document.getElementById("question_"+index+"_answer_id").innerText;
+            let answer          = document.getElementById("question_"+index+"_answer").innerText;
+            let answer_content  = "";
+            (answer == "") ? answer_content += "Ketikkan jawaban anda" : answer_content += answer;
+
+            // Getting previous data before button clicked
+            let post_id             = $("input[name=answer_id]").val();
+            let post_question_id    = $("input[name=question_id]").val();
+            let post_student_id     = $("#user_id").text();
+            let post_answer         = $("textarea").val().trim();
+            let this_id             = $("textarea").attr("id").split("_")[1];
+            let old_answer          = document.getElementById("question_"+this_id+"_answer").innerText.trim();
+
+            // AJAX PROCESS
+            if(post_answer != old_answer){
+                if (post_id == ""){
+                    $.ajax({
+                        type    : "POST",
+                        url     : "/store-student-answer/"+exam_id,
+                        data    : {
+                            question_id : post_question_id,
+                            student_id  : post_student_id,
+                            answer      : post_answer,
+                        },
+                        dataType: 'json',
+                        beforeSend : function(){
+                            loadLoadingIndicator();
+                        },
+                        complete: function(){
+                            loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
+                        },
+                        success: function (response){
+                            redirectAction(response, this_id);
+                        },
+                    });
+                } else {
+                    $.ajax({
+                        type    : "POST",
+                        url     : "/update-student-answer/"+exam_id,
+                        data    : {
+                            id          : post_id,
+                            question_id : post_question_id,
+                            student_id  : post_student_id,
+                            answer      : post_answer,
+                        },
+                        dataType: 'json',
+                        beforeSend : function(){
+                            loadLoadingIndicator();
+                        },
+                        complete: function(){
+                            loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
+                        },
+                        success: function(response){
+                            redirectAction(response, this_id);
+                        },
+                    });
+                }
+            }else{
+                loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
+                if(post_answer == ""){
+                    if($("#questionBtn_"+this_id).hasClass("activeNumberBtn")){
+                        $("#questionBtn_"+this_id).attr("disabled", false);
+                        $("#questionBtn_"+this_id).removeClass("activeNumberBtn");
+                        $("#questionBtn_"+this_id).addClass("emptyNumberBtn");
+                    }
+                    if($("#mobileQuestionBtn_"+this_id).hasClass("activeNumberBtn")){
+                        $("#mobileQuestionBtn_"+this_id).attr("disabled", false);
+                        $("#mobileQuestionBtn_"+this_id).removeClass("activeNumberBtn");
+                        $("#mobileQuestionBtn_"+this_id).addClass("emptyNumberBtn");
+                    }
+                }else{
+                    colorButton(this_id);
+                }
+            }
+
+            // Disabling & coloring active number button
+            $("#mobileQuestionBtn_"+index).attr("disabled", true);
+            if($("#mobileQuestionBtn_"+index).hasClass("emptyNumberBtn")){
+                $("#mobileQuestionBtn_"+index).removeClass("emptyNumberBtn");
+                $("#mobileQuestionBtn_"+index).addClass("activeNumberBtn");
+            }else if($("#mobileQuestionBtn_"+index).hasClass("filledNumberBtn")){
+                $("#mobileQuestionBtn_"+index).removeClass("filledNumberBtn");
+                $("#mobileQuestionBtn_"+index).addClass("activeNumberBtn");
+            }
+            // Disabling & coloring active mobile number button
+            $("#questionBtn_"+index).attr("disabled", true);
+            if( $("#questionBtn_"+index).hasClass("emptyNumberBtn") ){
+                $("#questionBtn_"+index).removeClass("emptyNumberBtn");
+                $("#questionBtn_"+index).addClass("activeNumberBtn");
+            }else if( $("#questionBtn_"+index).hasClass("filledNumberBtn") ){
+                $("#questionBtn_"+index).removeClass("filledNumberBtn");
+                $("#questionBtn_"+index).addClass("activeNumberBtn");
+            }
+        }
+
         $(document).ready(function () {
 
             // TIMER
-
             let endTime = $("#end_time").text();
             let countDownTime = new Date(endTime);
 
@@ -347,152 +476,92 @@
             });
 
             // QUESTION NAVIGATION BY NUMBER BUTTON
-            $(".question-btn").click(function (e) { 
+            $(".question-btn").click(function (e) {
                 e.preventDefault();
-                // Getting question index in the Array
-                let index = $(this).attr("id").split("_")[1];
-                let questionCount = parseInt(document.getElementById("questionCount").innerText);
-                let exam_id       = document.getElementById("exam_id").innerText;
 
-                // Getting question data by the index
-                let question_id     = document.getElementById("question_"+index+"_id").innerText;
-                let question        = document.getElementById("question_"+index+"_question").innerText;
-                let answer_id       = document.getElementById("question_"+index+"_answer_id").innerText;
-                let answer          = document.getElementById("question_"+index+"_answer").innerText;
-                let answer_content  = "";
-                (answer == "") ? answer_content += "Ketikkan jawaban anda" : answer_content += answer
-
-                let post_id             = $("input[name=answer_id]").val();
-                let post_question_id    = $("input[name=question_id]").val();
-                let post_student_id     = $("#user_id").text();
-                let post_answer         = $("textarea").val();
-                let this_id             = $("textarea").attr("id").split("_")[1];
-                let old_answer          = document.getElementById("question_"+this_id+"_answer").innerText;
-
-                // AJAX PROCESS
-                if(post_answer != old_answer){
-                    if (post_id == ""){
-                        $.ajax({
-                            type    : "POST",
-                            url     : "/store-student-answer/"+exam_id,
-                            data    : {
-                                question_id : post_question_id,
-                                student_id  : post_student_id,
-                                answer      : post_answer,
-                            },
-                            dataType: 'json',
-                            beforeSend : function(){
-                                loadLoadingIndicator();
-                            },
-                            complete: function(){
-                                loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
-                            },
-                            success: function (response){
-                                refreshData(response);
-                                colorButton(this_id);
-                            },
-                        });
-                    } else {
-                        $.ajax({
-                            type    : "POST",
-                            url     : "/update-student-answer/"+exam_id,
-                            data    : {
-                                id          : post_id,
-                                question_id : post_question_id,
-                                student_id  : post_student_id,
-                                answer      : post_answer,
-                            },
-                            dataType: 'json',
-                            beforeSend : function(){
-                                loadLoadingIndicator();
-                            },
-                            complete: function(){
-                                loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
-                            },
-                            success: function(response){
-                                refreshData(response);
-                                colorButton(this_id);
-                            },
-                        });
-                    }
-                }else{
-                    loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
+                // Disabling & coloring clicked button
+                $(this).attr("disabled", true);
+                if($(this).hasClass("emptyNumberBtn")){
+                    $(this).removeClass("emptyNumberBtn");
+                    $(this).addClass("activeNumberBtn");
                 }
+                else if($(this).hasClass("filledNumberBtn")){
+                    $(this).removeClass("filledNumberBtn");
+                    $(this).addClass("activeNumberBtn");
+                }
+                
+                // Getting question index in the Array
+                let index           = $(this).attr("id").split("_")[1];
+                let questionCount   = parseInt(document.getElementById("questionCount").innerText);
+                let exam_id         = document.getElementById("exam_id").innerText;
+
+                // MAIN PROCESS
+                processQuestion(index, questionCount, exam_id);
             });
 
             // QUESTION NAVIGATION BY NEXT & PREV BUTTON
             $("#questionContainer").on("click", ".items-center .question-btn", function(e){
                 e.preventDefault();
+
                 // Getting question index in the Array
                 let index = $(this).attr("id").split("_")[1];
                 let questionCount = parseInt(document.getElementById("questionCount").innerText);
                 let exam_id       = document.getElementById("exam_id").innerText;
+                
+                // MAIN PROCESS
+                processQuestion(index, questionCount, exam_id);
+            });
 
+            // SUBMIT BUTTON
+            $("#questionContainer").on("click", ".items-center #submitExamAnswer", function(e){
+                e.preventDefault();
+
+                let questionCount = parseInt(document.getElementById("questionCount").innerText);
+                let index = questionCount-1;
+                
                 // Getting question data by the index
-                let question_id     = document.getElementById("question_"+index+"_id").innerText;
-                let question        = document.getElementById("question_"+index+"_question").innerText;
-                let answer_id       = document.getElementById("question_"+index+"_answer_id").innerText;
-                let answer          = document.getElementById("question_"+index+"_answer").innerText;
-                let answer_content  = "";
-                (answer == "") ? answer_content += "Ketikkan jawaban anda" : answer_content += answer
+                // let question_id         = document.getElementById("question_"+index+"_id").innerText;
+                // let question            = document.getElementById("question_"+index+"_question").innerText;
+                // let answer_id           = document.getElementById("question_"+index+"_answer_id").innerText;
+                // let answer              = document.getElementById("question_"+index+"_answer").innerText;
+                // let answer_content      = "";
+                // (answer == "") ? answer_content += "Ketikkan jawaban anda" : answer_content += answer;
 
                 let post_id             = $("input[name=answer_id]").val();
                 let post_question_id    = $("input[name=question_id]").val();
                 let post_student_id     = $("#user_id").text();
-                let post_answer         = $("textarea").val();
+                let post_answer         = $("textarea").val().trim();
                 let this_id             = $("textarea").attr("id").split("_")[1];
-                let old_answer          = document.getElementById("question_"+this_id+"_answer").innerText;
+                let old_answer          = document.getElementById("question_"+this_id+"_answer").innerText.trim();
+
+                // console.log("Pos ID     : "+post_id);
+                // console.log("Pos Q ID   : "+post_question_id);
+                // console.log("Pos S ID   : "+post_student_id);
+                // console.log("Pos A      : "+post_answer);
+                // console.log("This ID    : "+this_id);
+                // console.log("Old Answer : "+old_answer);
                 
-                // AJAX PROCESS
-                if(post_answer != old_answer){
-                    if (post_id == ""){
-                        $.ajax({
-                            type    : "POST",
-                            url     : "/store-student-answer/"+exam_id,
-                            data    : {
-                                question_id : post_question_id,
-                                student_id  : post_student_id,
-                                answer      : post_answer,
-                            },
-                            dataType: 'json',
-                            beforeSend : function(){
-                                loadLoadingIndicator();
-                            },
-                            complete: function(){
-                                loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
-                            },
-                            success: function (response){
-                                refreshData(response);
-                                colorButton(this_id);
-                            },
-                        });
-                    } else {
-                        $.ajax({
-                            type    : "POST",
-                            url     : "/update-student-answer/"+exam_id,
-                            data    : {
-                                id          : post_id,
-                                question_id : post_question_id,
-                                student_id  : post_student_id,
-                                answer      : post_answer,
-                            },
-                            dataType: 'json',
-                            beforeSend : function(){
-                                loadLoadingIndicator();
-                            },
-                            complete: function(){
-                                loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
-                            },
-                            success: function(response){
-                                refreshData(response);
-                                colorButton(this_id);
-                            },
-                        });
-                    }
-                }else{
-                    loadQuestion(index, question_id, question, answer_id, answer, answer_content, questionCount);
+                $("#additionalFormFields").empty();
+
+                if (post_id == "" && post_answer != ""){
+                    console.log("SIMPAN BARU")
+                    let content = ""
+                        + "<input type=\"hidden\" name=\"answer_text\" value=\""+post_answer+"\">"
+                        + "<input type=\"hidden\" name=\"question_id\" value=\""+post_question_id+"\">"
+                        + "<input type=\"hidden\" name=\"student_id\" value=\""+post_student_id+"\">"
+                    + "";
+                    $("#additionalFormFields").html(content);
+
+                }else if(post_id != "" && post_answer != old_answer){
+                    console.log("UPDATE YANG SUDAH ADA")
+                    let content = ""
+                        + "<input type=\"hidden\" name=\"answer_id\" value=\""+post_id+"\">"
+                        + "<input type=\"hidden\" name=\"answer_text\" value=\""+post_answer+"\">"
+                        + "<input type=\"hidden\" name=\"question_id\" value=\""+post_question_id+"\">"
+                        + "<input type=\"hidden\" name=\"student_id\" value=\""+post_student_id+"\">"
+                    + "";
+                    $("#additionalFormFields").html(content);
                 }
-                
             });
 
             // Supporting auto-growing text-area

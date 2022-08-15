@@ -631,29 +631,39 @@
                     {{ date_format(date_create($exam->start_time),"H:i") }}
                 </p>
             </div>
-            <p class="block m-0 mb-4 text-sm text-base">{{ $exam->description }}</p>
-            <p class="flex items-center gap-3 mb-8">
-                <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </span>
-                <span>Belum diselesaikan</span>
-            </p>
-            {{-- <p class="flex items-center gap-3 mb-8 text-success">
-                <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                </span>
-                <span class="font-semibold">Sudah diselesaikan</span>
-            </p> --}}
+            <p class="block m-0 mb-4 text-sm xl:text-base">{{ $exam->description }}</p>
+            @if ($student_exam > 0)
+                <p class="flex items-center gap-3 mb-8 text-success">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <span class="font-semibold">Sudah diselesaikan</span>
+                </p>
+            @else
+                <p class="flex items-center gap-3 mb-8">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </span>
+                    <span>Belum diselesaikan</span>
+                </p>
+            @endif
+
             <div class="flex justify-end">
                 @if ($exam->is_open)
-                    <a href="{{ route('exam.start', [$classroom->id, $exam->id]) }}" 
-                        class="text-sm lg:text-base py-1.5 px-5 text-white bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center rounded-md font-medium">
-                        {{ $student_answer_count > 0 ? 'Lanjutkan Ujian' : 'Mulai Ujian' }}
-                    </a>
+                    @if ($student_exam > 0)
+                        <button type="button" disabled class="text-sm lg:text-base text-white py-1.5 px-5 disabledBtn text-center rounded-md font-medium">
+                            Ujian Sudah Dikerjakan
+                        </button>
+                    @else
+                        <a href="{{ route('exam.start', [$classroom->id, $exam->id]) }}" 
+                            class="text-sm lg:text-base py-1.5 px-5 text-white bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center rounded-md font-medium">
+                            {{ $student_answer_count > 0 ? 'Lanjutkan Ujian' : 'Mulai Ujian' }}
+                        </a>
+                    @endif
                 @else
                     <button type="button" disabled class="text-sm lg:text-base text-white py-1.5 px-5 disabledBtn text-center rounded-md font-medium">
                         Ujian Sudah Ditutup

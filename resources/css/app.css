@@ -60,5 +60,7 @@
     .emptyNumberBtn{
         @apply bg-white text-primary;
     }
-}
-
+    .activeNumberBtn{
+        @apply bg-primary-80 text-white;
+    }
+} 
