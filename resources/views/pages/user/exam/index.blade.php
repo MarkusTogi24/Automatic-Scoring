@@ -137,39 +137,33 @@
                         <div class="w-[28%] py-1 text-center">Waktu</div>
                         <div class="w-[10%] py-1 text-center">Nilai</div>
                     </div>
-                    {{-- @forelse ($exams as $exam) --}}
+                    @forelse ($classroom_members as $member)
                         <div class="flex justify-between items-center text-white bg-primary-50 rounded-md">
-                            <p class="w-[33%] block text-sm px-4 py-[1.25rem]">Marco Polonius Stefania Huruhara</p>
-                            <p class="w-[26%] block text-sm px-4 py-[1.25rem] text-center">Belum Mengumpulkan</p>
-                            <p class="w-[28%] block text-sm px-4 py-[1.25rem] text-center">
-                                {{ Carbon\Carbon::parse($exam->start_time)->isoFormat('D MMMM Y') }}, 
-                                {{ date_format(date_create($exam->start_time),"H:i:s") }}
+                            <p class="w-[33%] block text-sm px-4 py-[1.25rem]">{{ $member->name }}</p>
+                            <p class="w-[26%] block text-sm px-4 py-[1.25rem] text-center">
+                                @if ($member->total_score === null)
+                                    {{ $exam->is_open ? 'Belum' : 'Tidak' }} Mengumpulkan
+                                @else
+                                    Sudah Mengumpulkan
+                                @endif
                             </p>
-                            <p class="w-[10%] block text-sm px-4 py-[1.25rem] text-center">100</p>
-                        </div>
-                        <div class="flex justify-between items-center text-white bg-primary-50 rounded-md">
-                            <p class="w-[33%] block text-sm px-4 py-[1.25rem]">Marco Polonius Stefania Huruhara</p>
-                            <p class="w-[26%] block text-sm px-4 py-[1.25rem] text-center">Belum Mengumpulkan</p>
                             <p class="w-[28%] block text-sm px-4 py-[1.25rem] text-center">
-                                {{ Carbon\Carbon::parse($exam->start_time)->isoFormat('D MMMM Y') }}, 
-                                {{ date_format(date_create($exam->start_time),"H:i:s") }}
+                                @if ($member->total_score === null)
+                                    -
+                                @else
+                                    {{ Carbon\Carbon::parse($member->submit_time)->isoFormat('D MMMM Y') }}, 
+                                    {{ date_format(date_create($member->submit_time),"H:i:s") }}
+                                @endif
                             </p>
-                            <p class="w-[10%] block text-sm px-4 py-[1.25rem] text-center">100</p>
-                        </div>
-                        <div class="flex justify-between items-center text-white bg-primary-50 rounded-md">
-                            <p class="w-[33%] block text-sm px-4 py-[1.25rem]">Marco Polonius Stefania Huruhara</p>
-                            <p class="w-[26%] block text-sm px-4 py-[1.25rem] text-center">Belum Mengumpulkan</p>
-                            <p class="w-[28%] block text-sm px-4 py-[1.25rem] text-center">
-                                {{ Carbon\Carbon::parse($exam->start_time)->isoFormat('D MMMM Y') }}, 
-                                {{ date_format(date_create($exam->start_time),"H:i:s") }}
+                            <p class="w-[10%] block text-sm px-4 py-[1.25rem] text-center">
+                                {{ $member->total_score === null ? '-' : $member->total_score }}
                             </p>
-                            <p class="w-[10%] block text-sm px-4 py-[1.25rem] text-center">100</p>
                         </div>
-                    {{-- @empty
+                    @empty
                         <p class="block text-sm px-4 py-8 text-center text-white bg-primary-50 rounded-md">
                             Belum ada siswa di kelas ini.
                         </p>
-                    @endforelse --}}
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -633,7 +627,7 @@
             </div>
             <p class="block m-0 mb-4 text-sm xl:text-base">{{ $exam->description }}</p>
             @if ($student_exam > 0)
-                <p class="flex items-center gap-3 mb-8 text-success">
+                <p class="flex items-center gap-3 mb-8 text-primary">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -648,16 +642,17 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </span>
-                    <span>Belum diselesaikan</span>
+                    <span>{{ $exam->is_open ? 'Belum' : 'Tidak' }} diselesaikan</span>
                 </p>
             @endif
 
             <div class="flex justify-end">
                 @if ($exam->is_open)
                     @if ($student_exam > 0)
-                        <button type="button" disabled class="text-sm lg:text-base text-white py-1.5 px-5 disabledBtn text-center rounded-md font-medium">
-                            Ujian Sudah Dikerjakan
-                        </button>
+                        <a href="{{ route('exam.result', [$classroom->id, $exam->id]) }}" 
+                            class="text-sm lg:text-base py-1.5 px-5 text-white bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center rounded-md font-medium">
+                            Detail Ujian
+                        </a>
                     @else
                         <a href="{{ route('exam.start', [$classroom->id, $exam->id]) }}" 
                             class="text-sm lg:text-base py-1.5 px-5 text-white bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center rounded-md font-medium">

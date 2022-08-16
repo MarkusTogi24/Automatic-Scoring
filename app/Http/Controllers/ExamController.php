@@ -9,15 +9,16 @@ use App\Models\Exam;
 use App\Models\Question;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
+use App\Models\StudentAndScore;
 use App\Http\Helpers\ExamHelper;
+use App\Models\ClassroomAndMember;
+use App\Models\StudentAndQuestion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Helpers\ClassroomHelper;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Exam\StoreExamRequest;
 use App\Http\Requests\Exam\UpdateExamRequest;
-use App\Models\StudentAndQuestion;
-use App\Models\StudentAndScore;
 
 class ExamController extends Controller
 {
@@ -101,8 +102,26 @@ class ExamController extends Controller
             ->where('student_id', Auth::user()->id)
             ->count();
 
+        $classroom_members = ClassroomAndMember::select(
+                'classroom_and_member.*', 
+                'users.name', 
+                'student_and_score.total_score', 
+                'student_and_score.updated_at as submit_time'
+            )
+            ->leftJoin('users', function ($join) {
+                $join->on('classroom_and_member.member_id', 'users.id');
+            })
+            ->leftJoin('student_and_score', function ($join) {
+                $join->on('classroom_and_member.member_id', 'student_and_score.student_id');
+            })
+            ->where('users.role', 'SISWA')
+            ->where('classroom_id', $classroom->id)
+            ->get();
+
+        // dd($classroom_members);
+
         return view('pages.user.exam.index', 
-            compact('classroom', 'exam', 'questions', 'duration', 'total_score', 'student_answer_count', 'student_exam'));
+            compact('classroom', 'exam', 'questions', 'duration', 'total_score', 'student_answer_count', 'student_exam', 'classroom_members'));
     }
     
     public function edit($classroom_id, $exam_id)
@@ -221,5 +240,21 @@ class ExamController extends Controller
     {
         return redirect()->route('exam.show', [$classroom, $exam])
             ->with("warning","{$exam->name} - {$classroom->name} telah ditutup, seluruh jawaban anda berhasil disimpan!");
+    }
+
+    public function result(Classroom $classroom, Exam $exam)
+    {
+        $questions = Question::select("question.*", "student_and_question.answer as answer", "student_and_question.id as answer_id", "student_and_question.score as score")
+            ->leftJoin('student_and_question', function ($join) {
+                $join->on('question.id', 'student_and_question.question_id');
+                $join->on('student_and_question.student_id', DB::raw(Auth::user()->id));
+            })                   
+            ->where('question.exam_id', $exam->id)
+            ->orderBy('id')
+            ->get();
+
+        // dd($questions);
+
+        return view('pages.user.exam.result', compact('questions', 'classroom', 'exam'));
     }
 }

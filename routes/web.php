@@ -37,6 +37,7 @@ Route::middleware(['auth', 'user'])->group(function () {
         Route::put('mata-pelajaran/{classroom}/ujian/{exam}/update-exam',  'update')->name('update');
         Route::get('mata-pelajaran/{classroom}/mulai-ujian/{exam}', 'start')->name('start');
         Route::post('mata-pelajaran/{classroom}/mulai-ujian/{exam}', 'save')->name('save');
+        Route::get('mata-pelajaran/{classroom}/hasil-ujian/{exam}', 'result')->name('result');
     });
 
     Route::controller(QuestionController::class)->as('question.')->group(function () {

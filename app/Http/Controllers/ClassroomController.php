@@ -72,8 +72,14 @@ class ClassroomController extends Controller
 
         $classroom = Classroom::find($id);
 
-        $exams = Exam::select("*")
-            ->where("class_id", $id)
+        // 'result' field used for checking whether 'student' has submit answer to it
+        // by checking whether it's row is exist in student_and_score table
+        $exams = Exam::select("exam.*", "student_and_score.id as result")
+            ->leftJoin('student_and_score', function ($join) {
+                $join->on('exam.id', 'student_and_score.exam_id');
+                $join->on('student_and_score.student_id', DB::raw(Auth::user()->id));
+            })                 
+            ->where('class_id', $id)
             ->orderBy("start_time", "desc")
             ->get();
         

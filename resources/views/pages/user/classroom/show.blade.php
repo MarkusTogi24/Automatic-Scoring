@@ -214,7 +214,13 @@
                         </p>
                     @else
                         <p class="w-[30%] block text-sm px-4 py-[1.25rem]">{{ $exam->name }} - {{ $classroom->name }}</p>
-                        <p class="w-[23%] block text-sm px-4 py-[1.25rem] text-center">Belum Mengikuti</p>
+                        <p class="w-[23%] block text-sm px-4 py-[1.25rem] text-center font-bold">
+                            @if ($exam->result === null)
+                                {{ $exam->is_open ? 'Belum' : 'Tidak' }} Menyelesaikan
+                            @else
+                                Sudah Menyelesaikan
+                            @endif
+                        </p>
                         <p class="w-[32%] block text-sm px-4 py-[1.25rem] text-center">
                             {{ Carbon\Carbon::parse($exam->start_time)->isoFormat('D MMMM Y') }}, 
                             {{ date_format(date_create($exam->start_time),"H:i") }} -
