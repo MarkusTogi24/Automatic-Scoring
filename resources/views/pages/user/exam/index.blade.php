@@ -713,7 +713,6 @@
                 }
             }
         }
-
         $(document).ready(function () {
             // handle 'dragover' event
             $("#fileDropZone").on("dragover", function (e) {
@@ -835,7 +834,6 @@
                 }
             });
         });
-
     </script>
     <script>
         $(document).ready(function () {

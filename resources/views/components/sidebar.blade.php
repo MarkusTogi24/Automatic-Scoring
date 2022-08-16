@@ -101,7 +101,7 @@
             x-transition:enter.duration.300ms
             x-transition:leave.duration.300ms
             >
-            <a href="" class="text-primary-90 font-thin py-1">
+            <a href="{{ route('admin.account.index') }}" class="text-primary-90 font-thin py-1">
                 Data Akun
             </a>
             <a href="" class="text-primary-90 font-thin py-1">

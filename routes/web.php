@@ -6,11 +6,10 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ClassroomAndMemberController;
 use App\Http\Controllers\StudentAndQuestionController;
-
-
-
 
 Route::get('/', function () {
     return view('welcome');
@@ -64,9 +63,14 @@ Route::middleware(['auth', 'user'])->group(function () {
 
 // ADMIN__
 Route::middleware(['auth', 'admin'])->as('admin.')->prefix('admin')->group(function () {
-    Route::get('dashboard', function() {
-        return view('welcome');
-    })->name('dashboard');
+    Route::controller(DashboardController::class)->as('dashboard.')->group(function () {
+        Route::get('dashboard', 'index')->name('index');
+    });
+    Route::controller(AccountController::class)->as('account.')->group(function () {
+        Route::get('accounts', 'index')->name('index');
+        Route::post('create-account', 'store')->name('store');
+        Route::post('upload-account', 'upload')->name('upload');
+    });
 });
 
 
@@ -97,12 +101,12 @@ Route::get('/classroom/{classroom_id}/members', [ClassroomAndMemberController::c
 Route::delete('/classroom/{classroom_id}/exam-delete/{exam_id}', [ExamController::class, 'destroy']);
 
 // Route for open or close exam
-Route::post('/classroom/{classroom_id}/exam-change-status/{exam_id}', [ExamController::class, 'changeStatus']);
+// Route::post('/classroom/{classroom_id}/exam-change-status/{exam_id}', [ExamController::class, 'changeStatus']);
 
 // Route for show question (all and by question id)
-Route::get('/classroom/{classroom_id}/exam-show-question_by_id/{question_id}', [QuestionController::class, 'show']);
-Route::get('/classroom/{classroom_id}/exam-show-all-question/{exam_id}', [QuestionController::class, 'index']);
-Route::get('/classroom/{classroom_id}/start-exam/{exam_id}', [QuestionController::class, 'startExam']);
+// Route::get('/classroom/{classroom_id}/exam-show-question_by_id/{question_id}', [QuestionController::class, 'show']);
+// Route::get('/classroom/{classroom_id}/exam-show-all-question/{exam_id}', [QuestionController::class, 'index']);
+// Route::get('/classroom/{classroom_id}/start-exam/{exam_id}', [QuestionController::class, 'startExam']);
 
 // // Route for add question of the exam
 // Route::get('/classroom/{classroom_id}/exam-add-question/{exam_id}', [QuestionController::class, 'create']);
