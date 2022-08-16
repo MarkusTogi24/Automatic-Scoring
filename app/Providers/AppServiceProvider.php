@@ -21,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
                 'pages.user.classroom.index',
                 'pages.user.classroom.show', 
                 'pages.user.exam.index',
+                'pages.user.profile.index',
+                'pages.user.profile.edit',
             ],
             ClassroomComposer::class
         );

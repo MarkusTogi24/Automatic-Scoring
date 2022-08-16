@@ -3,7 +3,7 @@
     <button class="flex items-center gap-2"
         x-on:click="showAuthMenu =! showAuthMenu"
     >
-        <img src="{{ asset('image/dummy_pp.png') }}" class="w-9 h-9" alt="">
+        <img src="{{ asset('image/PP.jpg') }}" class="rounded-full w-9 h-9" alt="">
         <p class="hidden lg:inline-block text-sm">{{ explode(" ",Auth::user()->name)[0] }}</p>
         <span class="hidden lg:inline-block" x-bind:class=" showAuthMenu && 'rotate-180' ">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -42,7 +42,7 @@
         
         <!-- LINK TO PROFILE PAGE -->
         <div class="px-3">
-            <a href="#" role="button" class="text-sm flex gap-2 items-center py-1 px-2 rounded border-2 border-primary bg-white text-primary hover:bg-primary hover:text-white">
+            <a href="{{ route('profile.index') }}" role="button" class="text-sm flex gap-2 items-center py-1 px-2 rounded border-2 border-primary bg-white text-primary hover:bg-primary hover:text-white">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />

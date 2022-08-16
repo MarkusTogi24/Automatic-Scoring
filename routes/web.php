@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ClassroomAndMemberController;
@@ -50,6 +51,12 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::controller(StudentAndQuestionController::class)->as('student_answer.')->group(function () {
         Route::post('store-student-answer/{exam}', 'store')->name('store');
         Route::post('update-student-answer/{exam}', 'update')->name('update');
+    });
+
+    Route::controller(ProfileController::class)->as('profile.')->group(function () {
+        Route::get('profil-saya/', 'index')->name('index');
+        Route::get('ubah-profil/', 'edit')->name('edit');
+        Route::post('ubah-profil/', 'update')->name('update');
     });
 
     
