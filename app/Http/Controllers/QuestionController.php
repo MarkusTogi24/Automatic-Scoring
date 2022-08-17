@@ -7,10 +7,14 @@ use App\Models\Question;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Http\Helpers\ExamHelper;
+use App\Imports\QuestionsImport;
+use App\Action\QuestionsStoreAction;
+
+use Maatwebsite\Excel\Facades\Excel;
+use function PHPUnit\Framework\isNan;
 use App\Http\Requests\Question\StoreQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
-
-use function PHPUnit\Framework\isNan;
+use App\Http\Requests\Question\ImportQuestionsRequest;
 
 class QuestionController extends Controller
 {
@@ -61,37 +65,33 @@ class QuestionController extends Controller
             ->with("success","Data soal berhasil disimpan!");
     }
 
-    public function upload(Request $request, Classroom $classroom, Exam $exam)
+    public function upload(ImportQuestionsRequest $request, Classroom $classroom, Exam $exam)
     {
         $this->helper->authorizing_by_role("GURU");
         $this->helper->authorizing_classroom_member($classroom->id);
 
-        $file = $request->file('questionFile');
+        $temp = $request->file('questionFile' . $request->type)->store('temp');
+        $path = storage_path('app') . '/' . $temp;
 
-        $csv_file = fopen($file, 'r');
-        
-        $row_index = 0;
+        $questions = Excel::toCollection(new QuestionsImport, $path);
 
-        while (($row_data = fgetcsv($csv_file)) != false) {
-            if ($row_index != 0){
-                if (is_numeric($row_data[2])){
-                    $question = new Question;
-                    $question->exam_id = $exam->id;
-                    $question->question = $row_data[0];
-                    $question->answer_key = $row_data[1];
-                    $question->max_score = (float) $row_data[2];
-
-                    $question->save();     
-                } else {
-                    echo "Pertanyaan '".$row_data[0]. "' memiliki score yg invalid";
-                }
-            }
-
-                $row_index = $row_index + 1;
+        try {
+            $response = (new QuestionsStoreAction)->importQuestions($questions, $exam);
+        } catch (\Exception $exception) {
+            return redirect()->back()
+                ->with("failed", "Terjadi kesalahan saat akan menyimpan soal, harap coba beberapa saat lagi.");
+        } catch (\Error $error) {
+            return redirect()->back()
+                ->with("failed", "Terjadi kesalahan saat akan menyimpan soal, harap coba beberapa saat lagi.");
         }
 
-        fclose($csv_file);
-        // dd($request->all());
+        if(is_numeric($response)){
+            return redirect()->back()
+                ->with("success", "Sebanyak {$response} soal baru berhasil disimpan.");
+        }else{
+            return redirect()->back()
+                ->with("failed", $response);
+        }
     }
     
     public function show($classroom_id, $question_id)

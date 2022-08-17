@@ -691,7 +691,7 @@
             let dropMessageContainer = document.getElementById("dropMsgContainer");
 
             if (file) {
-                let allowedExt  = ["csv"];
+                let allowedExt  = ['xls', 'xlsx', 'xlsm'];
                 let fileExt     = file.name.split(".")[1];
                 if (allowedExt.includes(fileExt)) {
                     inputLabel.classList.remove("block");

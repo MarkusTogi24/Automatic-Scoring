@@ -434,7 +434,7 @@
         let dropMessageContainer = document.getElementById("dropMsgContainer");
 
         if (file) {
-            let allowedExt      = ["csv"];
+            let allowedExt      = ['xls', 'xlsx', 'xlsm'];
             let fileExt     = file.name.split(".")[1];
             if (allowedExt.includes(fileExt)) {
                 inputLabel.classList.remove("block");
@@ -452,7 +452,7 @@
                 dropMessageContainer.classList.remove("hidden");
                 dropMessageContainer.classList.add("flex");
                 dropMessage.innerHTML =
-                    `Pilih file <span class="italic">.csv</span>`;
+                    `Pilih file <span class="italic">.xlsx</span>, <span class="italic">.xlsm</span> atau <span class="italic">.xls</span>`;
             }
         }
     }
