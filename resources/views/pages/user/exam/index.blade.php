@@ -558,7 +558,7 @@
                         <!-- SUBMIT BUTTON -->
                         <div class="w-full">
                             <button type="submit" class="w-full text-white bg-primary hover:bg-primary-70 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
-                                {{ __('Hapus') }}
+                                {{ __('Edit') }}
                             </button>
                         </div>
                     </form>
@@ -590,14 +590,14 @@
                     <div class="w-full max-h-96 py-2 overflow-y-auto mb-6 custom-scrollbar">
                         <!-- QUESTION TEXT -->
                         <div class="">
-                            <p class="block mb-2 text-base font-bold text-gray-900">Anda akan menghapus soal berikut : </p>
-                            <p class="block mb-2 text-sm font-semibold text-gray-900">Pertanyaan :</p>
-                            <p class="block mb-2 text-sm font-medium text-gray-900" id="delete_question_text"></p>
-                            <p class="block mb-2 text-sm font-semibold text-gray-900">Bobot nilai :</p>
-                            <p class="block mb-2 text-sm font-medium text-gray-900" id="delete_question_score"></p>
-                            <p class="block mb-2 text-sm font-semibold text-gray-900">Jawaban :</p>
-                            <p class="block mb-2 text-sm font-medium text-gray-900" id="delete_question_answer"></p>
-                            <p class="block text-base font-bold text-gray-900">Anda yakin untuk melanjutkan aksi ini?</p>
+                            <p class="block mb-2 text-base font-bold text-gray-700">Anda akan menghapus soal berikut : </p>
+                            <p class="block mb-2 text-sm font-semibold text-gray-700">Pertanyaan :</p>
+                            <p class="block mb-2 text-sm font-medium text-gray-700" id="delete_question_text"></p>
+                            <p class="block mb-2 text-sm font-semibold text-gray-700">Bobot nilai :</p>
+                            <p class="block mb-2 text-sm font-medium text-gray-700" id="delete_question_score"></p>
+                            <p class="block mb-2 text-sm font-semibold text-gray-700">Jawaban :</p>
+                            <p class="block mb-2 text-sm font-medium text-gray-700" id="delete_question_answer"></p>
+                            <p class="block text-base font-bold text-gray-700">Anda yakin untuk melanjutkan aksi ini?</p>
                         </div>
                     </div>
                     <!-- SUBMIT BUTTON -->

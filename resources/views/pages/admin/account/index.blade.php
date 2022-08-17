@@ -3,8 +3,10 @@
 @section('content')
 
 <div class="w-full" x-data="{
-    showAddAccountPopUp : @if($errors->hasBag('create_account')) true @else false @endif,
-    showUploadAccountPopUp : false
+    showAddAccountPopUp     : @if($errors->hasBag('create_account')) true @else false @endif,
+    showEditAccountPopUp    : @if($errors->hasBag('edit_account')) true @else false @endif,
+    showUploadAccountPopUp  : false,
+    showDeleteAccountPopUp  : false,
 }">
     @include('components.session-alert')
 
@@ -44,21 +46,21 @@
                         <td class="py-4 px-6 text-center">
                             {{($accounts->currentPage() - 1) * $accounts->perPage() + $loop->iteration}}
                         </td>
-                        <th scope="row" class="py-4 px-6 font-medium whitespace-nowrap">
+                        <th scope="row" class="py-4 px-6 font-medium whitespace-nowrap" id="accountName_{{ $account->id }}">
                             {{ $account->name }}
                         </th>
-                        <td class="py-4 px-6">
+                        <td class="py-4 px-6" id="accountEmail_{{ $account->id }}">
                             {{ $account->email }}
                         </td>
-                        <td class="py-4 px-6 text-center">
+                        <td class="py-4 px-6 text-center" id="accountRole_{{ $account->id }}">
                             {{ $account->role }}
                         </td>
                         <td class="flex items-center py-4 px-6 space-x-3 justify-center">
-                            <button type="button"
+                            <button type="button" id="editAccountBtn_{{ $account->id }}" x-on:click="showEditAccountPopUp = true"
                                 class="edit-account-btn block w-16 py-1 text-xs rounded bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-primary-30 text-center text-white">
                                 Edit
                             </button>
-                            <button type="button"
+                            <button type="button" id="deleteAccountBtn_{{ $account->id }}" x-on:click="showDeleteAccountPopUp = true"
                             class="delete-account-btn block w-16 py-1 text-xs rounded bg-danger hover:bg-danger-70 focus:ring-2 focus:outline-none focus:ring-danger-30 text-center text-white">
                                 Hapus
                             </button>
@@ -278,6 +280,145 @@
             </div>
         </div>
     </div>
+
+    <!-- "EDIT QUESTION" POP UP FOR TEACHER -->
+    <div class="fixed z-[2220] inset-0"
+        x-cloak x-show="showEditAccountPopUp">
+        <div class="absolute z-[2222] inset-0 bg-black bg-opacity-30 flex justify-center items-center py-4">
+            <div class="bg-white w-10/12 md:w-3/5 lg:1/2 xl:w-2/5 rounded-md p-5">
+                <!-- POP UP HEADER -->
+                <div class="flex justify-between items-center mb-6">
+                    <p class="block m-0 text-lg font-semibold text-gray-900 tracking-wide">
+                        Edit Akun
+                    </p>
+                    <button type="button" class="block border-none outline-none text-gray-900 hover:text-gray-800 font-medium"
+                        x-on:click="showEditAccountPopUp = false">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- POP UP BODY -->
+                <form action="{{ route('admin.account.update') }}" method="POST">
+                    @method('PUT') @csrf
+                    <div class="w-full max-h-96 py-2 overflow-y-auto mb-6 custom-scrollbar">
+                        <!-- USER ID -->
+                        <input type="hidden" name="user_id" id="edit_user_id" value="{{ old('user_id') }}">
+                        
+                        <!-- FULL NAME -->
+                        <div class="mb-3">
+                            <p class="block m-0 mb-2 text-sm font-medium text-gray-900">{{ __('Nama Lengkap') }}</p>
+                            <input type="text" id="edit_name" name="name" value="{{ old('name') }}" placeholder="Nama Lengkap"
+                                class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
+                                autocomplete="off">
+                            @error('name', 'edit_account')
+                                <p class="block mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div class="mb-3">
+                            <p class="block m-0 mb-2 text-sm font-medium text-gray-900">{{ __('Email') }}</p>
+                            <input type="email" id="edit_email" name="email" value="{{ old('email') }}" placeholder="Email"
+                                class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
+                                autocomplete="off">
+                            @error('email', 'edit_account')
+                                <p class="block mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- ROLE -->
+                        <div class="mb-3">
+                            <p class="block m-0 mb-2 text-sm font-medium text-gray-900">{{ __('Role') }}</p>
+                            <input type="text" id="edit_role" name="role" value="{{ old('role') }}"
+                                class="border-2 border-primary-20 text-primary-50 bg-blue-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
+                                autocomplete="off" readonly>
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div class="mb-3">
+                            <p class="block m-0 mb-2 text-sm font-medium text-gray-900">{{ __('Kata Sandi Baru') }} <span class="text-primary"><small>opsional</small></span></p>
+                            <input type="password" id="edit_password" name="password" placeholder="Kata Sandi Baru"
+                                class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
+                                autocomplete="off">
+                            @error('password', 'edit_account')
+                                <p class="block mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- PASSWORD CONFIRMATION -->
+                        <div class="">
+                            <p class="block m-0 mb-2 text-sm font-medium text-gray-900">{{ __('Konfirmasi Kata Sandi Baru') }} <span class="text-primary"><small>opsional</small></span></p>
+                            <input type="password" id="edit_password_confirmation" name="password_confirmation" placeholder="Konfirmasi Kata Sandi Baru"
+                                class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full p-2.5 custom-placeholder" 
+                                autocomplete="off">
+                                @error('password_confirmation', 'edit_account')
+                                    <p class="block mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+                                @enderror
+                        </div>
+                    </div>
+                    <!-- SUBMIT BUTTON -->
+                    <div class="w-full">
+                        <button type="submit" class="w-full text-white bg-primary hover:bg-primary-70 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
+                            {{ __('Edit') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- "DELETE QUESTION" POP UP FOR TEACHER -->
+    <div class="fixed z-[2220] inset-0"
+        x-cloak x-show="showDeleteAccountPopUp">
+        <div class="absolute z-[2222] inset-0 bg-black bg-opacity-30 flex justify-center items-center py-4">
+            <div class="bg-white w-10/12 md:w-3/5 lg:1/2 xl:w-2/5 rounded-md p-5">
+                <!-- POP UP HEADER -->
+                <div class="flex justify-between items-center mb-4">
+                    <p class="block m-0 text-lg font-semibold text-gray-900 tracking-wide">
+                        Hapus Akun
+                    </p>
+                    <button type="button" class="block border-none outline-none text-gray-900 hover:text-gray-800 font-medium"
+                        x-on:click="showDeleteAccountPopUp = false">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- POP UP BODY -->
+                <div class="w-full max-h-96 py-2 overflow-y-auto mb-4 custom-scrollbar text-gray-700">
+                    <!-- QUESTION TEXT -->
+                    <p class="block m-0 mb-4 text-base font-semibold">Anda akan menghapus akun berikut : </p>
+                    <div class="grid grid-cols-4 gap-2 mb-4 text-sm">
+                        <p class="block m-0">Nama</p>
+                        <p class="block m-0 col-span-3 font-semibold" id="delete_account_name"></p>
+                        <p class="block m-0">Email</p>
+                        <p class="block m-0 col-span-3 font-semibold" id="delete_account_email"></p>
+                        <p class="block m-0">Role</p>
+                        <p class="block m-0 col-span-3 font-semibold" id="delete_account_role"></p>
+                    </div>
+                    <p class="block text-base font-semibold">Anda yakin untuk melanjutkan aksi ini?</p>
+                </div>
+                <!-- SUBMIT BUTTON -->
+                <form action="{{ route('admin.account.destroy') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="w-full">
+                        <button type="submit" name="user_id" id="delete_user_id" class="w-full text-white bg-danger hover:bg-danger-70 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
+                            {{ __('Hapus') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 
@@ -435,6 +576,39 @@
                 $("#submitFileBtn").addClass('disabledBtn');
             }
         });
+
+        // edit account
+        $(".edit-account-btn").click(function (e) { 
+            e.preventDefault();
+            let id = $(this).attr("id").split("_")[1];
+
+            let name    = document.getElementById("accountName_"+id).innerText;
+            let email   = document.getElementById("accountEmail_"+id).innerText;
+            let role    = document.getElementById("accountRole_"+id).innerText;
+
+            $("#edit_user_id").val(id);
+            $("#edit_name").val(name);
+            $("#edit_email").val(email);
+            $("#edit_role").val(role);
+
+        });
+
+        // delete account 
+        $(".delete-account-btn").click(function (e) { 
+                e.preventDefault();
+
+                let id = $(this).attr("id").split("_")[1];
+
+                let name    = document.getElementById("accountName_"+id).innerText;
+                let email   = document.getElementById("accountEmail_"+id).innerText;
+                let role    = document.getElementById("accountRole_"+id).innerText;
+
+                $("#delete_user_id").val(id);
+                $("#delete_account_name").text(name);
+                $("#delete_account_email").text(email);
+                $("#delete_account_role").text(role);
+
+            });
     });
 </script>
 @endsection

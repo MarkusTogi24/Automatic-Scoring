@@ -6,7 +6,7 @@
     </a>
     
     <!-- HOME -->
-    <a href="{{ route('classroom.index') }}" 
+    <a href="{{ Auth::user()->role != "ADMIN" ? route('classroom.index') : route('admin.dashboard.index') }}" 
         class="{{ request()->routeIs('classroom.index') ? 'bg-primary-70 font-semibold' : 'bg-primary' }} text-white p-3 rounded-md" 
         x-bind:class="showSidebar ? 'w-full' : 'w-fit' ">
         <div class="flex gap-3 items-center" x-bind:class="showSidebar ? 'w-full' : 'w-fit' ">
@@ -101,10 +101,10 @@
             x-transition:enter.duration.300ms
             x-transition:leave.duration.300ms
             >
-            <a href="{{ route('admin.account.index') }}" class="text-primary-90 font-thin py-1">
+            <a href="{{ route('admin.account.index') }}" class="text-primary-90 py-1 {{ request()->routeIs('admin.account.index') || request()->routeIs('admin.account.index.*') ? 'font-semibold' : 'font-thin' }}">
                 Data Akun
             </a>
-            <a href="" class="text-primary-90 font-thin py-1">
+            <a href="{{ route('admin.classroom.index') }}" class="text-primary-90 py-1 {{ request()->routeIs('admin.classroom.index') ? 'font-semibold' : 'font-thin' }}">
                 Data Kelas
             </a>
         </div>

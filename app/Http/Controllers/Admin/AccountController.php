@@ -5,15 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Admin\Account\StoreAccountRequest;
+use App\Http\Requests\Admin\Account\UpdateAccountRequest;
 
 class AccountController extends Controller
 {
     public function index()
     {
-        $accounts = User::paginate(10);
+        $accounts = User::query()
+            ->where('id', '!=', Auth::user()->id)
+            ->orderBy('role')
+            ->paginate(10);
 
         return view('pages.admin.account.index', compact('accounts'));
     }
@@ -31,6 +36,22 @@ class AccountController extends Controller
 
         return redirect()->route('admin.account.index')
             ->with("success","Akun baru berhasil dibuat!");
+    }
+
+    public function update(UpdateAccountRequest $request)
+    {
+        $validated = $request->validated();
+        
+        $account            = User::find($request->user_id);
+
+        $account->name      = $validated["name"];
+        $account->email     = $validated["email"];
+        if(isset($validated["password"])){
+            $account->password = Hash::make($validated["password"]);
+        }
+        $account->save();
+
+        return back()->with("success","Perubahan pada data akun baru berhasil disimpan!");
     }
 
     public function upload(Request $request)
@@ -80,7 +101,7 @@ class AccountController extends Controller
         }
 
         dd($input_email, $emailExistInDb, $emailExistMessage, $emailDuplicatesMessage, $duplicates);
-        
+
         $csv_file = fopen($file, 'r');
         $row_index = 0;
         $data_count = 0;
@@ -101,5 +122,13 @@ class AccountController extends Controller
         fclose($csv_file);
 
         return back()->with("success","{$data_count} akun baru berhasil dibuat!");
+    }
+
+    public function destroy(Request $request)
+    {
+        $account = User::find($request->user_id);
+        $account->delete();
+
+        return back()->with("success","Data akun berhasil dihapus!");
     }
 }

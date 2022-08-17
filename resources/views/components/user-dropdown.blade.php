@@ -41,20 +41,22 @@
         </div>
         
         <!-- LINK TO PROFILE PAGE -->
-        <div class="px-3">
-            <a href="{{ route('profile.index') }}" role="button" class="text-sm flex gap-2 items-center py-1 px-2 rounded border-2 border-primary bg-white text-primary hover:bg-primary hover:text-white">
-                <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                    </svg>
-                </span>
-                <span class="font-semibold">
-                    {{ __('Profil') }}
-                </span>
-            </a>
-        </div>
+        @if (Auth::user()->role != "ADMIN")
+            <div class="px-3">
+                <a href="{{ route('profile.index') }}" role="button" class="text-sm flex gap-2 items-center py-1 px-2 rounded border-2 border-primary bg-white text-primary hover:bg-primary hover:text-white">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <span class="font-semibold">
+                        {{ __('Profil') }}
+                    </span>
+                </a>
+            </div>
 
-        <div class="border-t-2 border-gray-200"></div>
+            <div class="border-t-2 border-gray-200"></div>
+        @endif
 
         <!-- LOGOUT BUTTON -->
         <div class="px-3">

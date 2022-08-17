@@ -861,6 +861,10 @@ video {
   grid-column: span 5 / span 5;
 }.col-span-11 {
   grid-column: span 11 / span 11;
+}.col-span-2 {
+  grid-column: span 2 / span 2;
+}.col-span-3 {
+  grid-column: span 3 / span 3;
 }.col-start-5 {
   grid-column-start: 5;
 }.m-0 {
@@ -1151,6 +1155,8 @@ video {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }.grid-cols-7 {
   grid-template-columns: repeat(7, minmax(0, 1fr));
+}.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }.flex-col {
   flex-direction: column;
 }.flex-nowrap {

@@ -2,29 +2,53 @@
 
 namespace App\Http\Requests\Admin\Account;
 
+use App\Models\User;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAccountRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
+    protected $errorBag = 'edit_account';
+
     public function authorize()
     {
-        return false;
+        return auth()->user()->role === "ADMIN";
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
     public function rules()
     {
         return [
-            //
+            'name'                  =>  'required',
+            'email'                 => [
+                'required',
+                Rule::unique('users')->ignore(request()->get('user_id'), 'id')
+            ],
+            'role'                  =>  'required',
+            'password'              =>  [
+                'nullable',
+                'confirmed',
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols()
+            ],
+            'password_confirmation' =>  'nullable',
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'name'                  =>  'Nama lengkap',
+            'email'                 =>  'Email',
+            'role'                  =>  'Role',
+            'password'              =>  'Kata sandi',
+            'password_confirmation' =>  'Konfirmasi kata sandi',
+        ];
+    }
+
+    // public function messages()
+    // {
+    //     return [
+    //         'role.required'         => 'Anda wajib memilih salah satu dari role tersedia.'
+    //     ];
+    // }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ClassroomAndMemberController;
 use App\Http\Controllers\StudentAndQuestionController;
+use App\Http\Controllers\Admin\ClassroomController as ClassController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -70,6 +71,12 @@ Route::middleware(['auth', 'admin'])->as('admin.')->prefix('admin')->group(funct
         Route::get('accounts', 'index')->name('index');
         Route::post('create-account', 'store')->name('store');
         Route::post('upload-account', 'upload')->name('upload');
+        Route::put('update-account', 'update')->name('update');
+        Route::delete('destroy-account', 'destroy')->name('destroy');
+    });
+
+    Route::controller(ClassController::class)->as('classroom.')->group(function () {
+        Route::get('classrooms', 'index')->name('index');
     });
 });
 
