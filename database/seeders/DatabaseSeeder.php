@@ -8,16 +8,9 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
-
-        \App\Models\User::factory()->create([
+        \App\Models\User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'role' => 'ADMIN',
