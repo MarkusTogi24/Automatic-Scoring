@@ -13,7 +13,7 @@ use App\Http\Controllers\StudentAndQuestionController;
 use App\Http\Controllers\Admin\ClassroomController as ClassController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('login');
 });
 
 Auth::routes();
