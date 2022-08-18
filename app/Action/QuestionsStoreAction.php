@@ -4,7 +4,6 @@ namespace App\Action;
 
 use App\Models\Exam;
 use App\Models\Question;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class QuestionsStoreAction
@@ -40,10 +39,5 @@ class QuestionsStoreAction
             }
             return $savedQuestion;
         }
-
-        dd($savedQuestion, $errorCount);
-
-        return $savedQuestion;
     }
-    
 }

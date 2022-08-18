@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Imports\AccountsImport;
+use App\Action\AccountsStoreAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Admin\Account\StoreAccountRequest;
 use App\Http\Requests\Admin\Account\UpdateAccountRequest;
+use App\Http\Requests\Admin\Account\ImportAccountsRequest;
 
 class AccountController extends Controller
 {
@@ -17,6 +21,7 @@ class AccountController extends Controller
     {
         $accounts = User::query()
             ->where('id', '!=', Auth::user()->id)
+            ->where('role', '!=', 'ADMIN')
             ->orderBy('role')
             ->paginate(10);
 
@@ -54,74 +59,32 @@ class AccountController extends Controller
         return back()->with("success","Perubahan pada data akun baru berhasil disimpan!");
     }
 
-    public function upload(Request $request)
+    public function upload(ImportAccountsRequest $request)
     {
-        $users_email = User::all()->pluck('email')->toArray();
+        $temp = $request->file('accountFile' . $request->type)->store('temp');
+        $path = storage_path('app') . '/' . $temp;
 
-        $file = $request->file('accountFile');
+        $accounts = Excel::toCollection(new AccountsImport, $path);
 
-        $emailExistMessage = "Email ";
-        $emailExistInDb = 0;
-        $input_email = array();
+        $db_emails = User::all()->pluck('email')->toArray();
 
-        $csv_file = fopen($file, 'r');
-        $row_index = 0;
-        while (($row_data = fgetcsv($csv_file)) != false) {
-            if ($row_index != 0){
-                $input_email[] = $row_data[1];
-                if (in_array( $row_data[1], $users_email )){
-                    $emailExistMessage .= $row_data[1] . ", ";
-                    $emailExistInDb++;
-                }
-            }
-            $row_index += 1;
-        }
-        fclose($csv_file);
-
-        $emailExistMessage .= "sudah digunakan di sistem, harap periksa file .csv yang akan diunggah.";
-        
-        if($emailExistInDb > 0){
-            return back()->with("failed",$emailExistMessage);
+        try {
+            $response = (new AccountsStoreAction)->importAccounts($accounts, $db_emails);
+        } catch (\Exception $exception) {
+            return redirect()->back()
+                ->with("failed", "Terjadi kesalahan saat akan menyimpan akun, harap coba beberapa saat lagi.");
+        } catch (\Error $error) {
+            return redirect()->back()
+                ->with("failed", "Terjadi kesalahan saat akan menyimpan akun, harap coba beberapa saat lagi.");
         }
 
-        $emailDuplicatesMessage = "Terdapat lebih dari 1 data dengan email ";
-
-        $duplicates = array();
-        foreach(array_count_values($input_email) as $val => $count){
-            if($count > 1){
-                $duplicates[] = $val;
-                $emailDuplicatesMessage .= $val . ", ";
-            } 
+        if(is_numeric($response)){
+            return redirect()->back()
+                ->with("success", "Sebanyak {$response} baris data akun baru berhasil disimpan.");
+        }else{
+            return redirect()->back()
+                ->with("failed", $response);
         }
-
-        $emailDuplicatesMessage .= "harap periksa file .csv yang akan diunggah.";
-
-        if(sizeof($duplicates) > 0){
-            return back()->with("failed",$emailDuplicatesMessage);
-        }
-
-        dd($input_email, $emailExistInDb, $emailExistMessage, $emailDuplicatesMessage, $duplicates);
-
-        $csv_file = fopen($file, 'r');
-        $row_index = 0;
-        $data_count = 0;
-        while (($row_data = fgetcsv($csv_file)) != false) {
-            if ($row_index != 0){
-
-                $new_account                = new User;
-                $new_account->name          = $row_data[0];
-                $new_account->email         = $row_data[1];
-                $new_account->role          = $row_data[2];
-                $new_account->password      = Hash::make($row_data[3]);
-                $new_account->save();
-
-                $data_count++;
-            }
-            $row_index += 1;
-        }
-        fclose($csv_file);
-
-        return back()->with("success","{$data_count} akun baru berhasil dibuat!");
     }
 
     public function destroy(Request $request)

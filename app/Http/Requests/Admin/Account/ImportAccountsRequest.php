@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Question;
+namespace App\Http\Requests\Admin\Account;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ImportQuestionsRequest extends FormRequest
+class ImportAccountsRequest extends FormRequest
 {
-    protected $errorBag = 'import_questions';
+    protected $errorBag = 'import_accounts';
 
     public function authorize()
     {
@@ -18,7 +18,7 @@ class ImportQuestionsRequest extends FormRequest
         $extensions = ['xls', 'xlsx', 'xlsm'];
 
         return [
-            'questionFile' => [
+            'accountFile' => [
                 'required', 
                 'file', 
                 function ($attribute, $value, $fail) use ($extensions) {
@@ -33,7 +33,7 @@ class ImportQuestionsRequest extends FormRequest
     public function attributes()
     {
         return [
-            'questionFile'              =>  'File unggahan',
+            'accountFile'              =>  'File unggahan',
         ];
     }
 }
