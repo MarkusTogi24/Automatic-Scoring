@@ -74,16 +74,40 @@ class ClassroomController extends Controller
 
         // 'result' field used for checking whether 'student' has submit answer to it
         // by checking whether it's row is exist in student_and_score table
-        $exams = Exam::select("exam.*", "student_and_score.id as result")
-            ->leftJoin('student_and_score', function ($join) {
-                $join->on('exam.id', 'student_and_score.exam_id');
-                $join->on('student_and_score.student_id', DB::raw(Auth::user()->id));
-            })                 
-            ->where('class_id', $id)
-            ->orderBy("start_time", "desc")
-            ->get();
+        // $exams = Exam::select("exam.*", "student_and_score.id as result")
+        //     ->leftJoin('student_and_score', function ($join) {
+        //         $join->on('exam.id', 'student_and_score.exam_id');
+        //         $join->on('student_and_score.student_id', DB::raw(Auth::user()->id));
+        //     })                 
+        //     ->where('class_id', $id)
+        //     ->orderBy("start_time", "desc")
+        //     ->get();
         
-        return view('pages.user.classroom.show', compact('classroom', 'exams'));
+        $exams = EXAM
+        ::select(
+            "exam.id as id", 
+            "exam.name as name",
+            "exam.description as description",
+            "exam.start_time as start_time",
+            "exam.end_time as end_time",
+            "exam.is_open as is_open",
+            DB::raw('count(student_and_score.id) as total_submission'))
+        ->leftJoin("student_and_score", "exam.id", "=", "student_and_score.exam_id")
+        ->where("exam.class_id", $id)
+        ->groupBy("id", "name", "description", "start_time", "end_time", "is_open")
+        ->orderBy("exam.start_time", "desc")->get();
+
+        $total_student = ClassroomAndMember
+        ::select(
+            DB::raw("count(classroom_and_member.id) as total_student"))
+        ->leftJoin("users", "classroom_and_member.member_id", "=", "users.id")
+        ->where("classroom_and_member.classroom_id", $id)
+        ->where("users.role", "SISWA")
+        ->get();
+
+        $total_student = $total_student[0];
+
+        return view('pages.user.classroom.show', compact('classroom', 'exams', 'total_student'));
     }
     
     public function edit($id)
