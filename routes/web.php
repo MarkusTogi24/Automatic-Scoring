@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ClassroomAndMemberController;
 use App\Http\Controllers\StudentAndQuestionController;
 use App\Http\Controllers\Admin\ClassroomController as ClassController;
+use App\Http\Controllers\StudentAndScoreController;
+use App\Models\StudentAndScore;
 
 Route::get('/', function () {
     return redirect('login');
@@ -129,6 +131,8 @@ Route::get('/classroom/{classroom_id}/exam-delete-question/{question_id}', [Ques
 // Route::resource('/question', QuestionController::class);
 Route::resource('/member', ClassroomAndMemberController::class);
 
+Route::get('/total_score/{class_id}', [StudentAndScoreController::class, 'showRecordedScoreAllExam']);
+Route::get('/total_score-per-exam/{exam_id}', [StudentAndScoreController::class, 'showRecordedScorePerExam']);
 Route::fallback(function () {
     return view('welcome');
 });

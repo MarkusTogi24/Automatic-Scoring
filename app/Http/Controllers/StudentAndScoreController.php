@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Exam;
 use Illuminate\Http\Request;
 
 class StudentAndScoreController extends Controller
@@ -80,5 +81,29 @@ class StudentAndScoreController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function showRecordedScoreAllExam($class_id){
+        $exam_all_and_score = Exam
+        ::select("exam.id as exam_id", "exam.name as exam_name", "student_and_score.total_score as total_score", "users.name as name")
+        ->leftJoin("student_and_score", "exam.id", "=", "student_and_score.exam_id")
+        ->leftJoin("users", "student_and_score.student_id", "=", "users.id")
+        ->where("exam.class_id", $class_id)
+        ->whereNotNull("student_and_score.total_score")
+        ->get();
+
+        return compact('exam_all_and_score');
+    }
+
+    public function showRecordedScorePerExam($exam_id){
+        $exam_score = Exam
+        ::select("exam.id as exam_id", "exam.name as exam_name", "student_and_score.total_score as total_score", "users.name as name")
+        ->leftJoin("student_and_score", "exam.id", "=", "student_and_score.exam_id")
+        ->leftJoin("users", "student_and_score.student_id", "=", "users.id")
+        ->where("exam.id", $exam_id)
+        ->whereNotNull("student_and_score.total_score")
+        ->get();
+
+        return compact('exam_score');
     }
 }
