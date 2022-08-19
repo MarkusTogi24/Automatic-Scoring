@@ -206,7 +206,7 @@
                         <div class="w-[33%] text-sm px-4 py-[1.25rem]">
                             <a href="{{ route('exam.show', [$classroom->id, $exam->id]) }}" class="hover:font-semibold" >{{ $exam->name }} - {{ $classroom->name }}</a>
                         </div>
-                        <p class="w-[32%] block text-sm px-4 py-[1.25rem] text-center">?? / ?? Siswa Menyelesaikan</p>
+                        <p class="w-[32%] block text-sm px-4 py-[1.25rem] text-center">{{ $exam->total_submission }} / {{ $total_student ? $total_student : '0' }} Siswa Menyelesaikan</p>
                         <p class="w-[33%] block text-sm px-4 py-[1.25rem] text-center">
                             {{ Carbon\Carbon::parse($exam->start_time)->isoFormat('D MMMM Y') }}, 
                             {{ date_format(date_create($exam->start_time),"H:i") }} -
