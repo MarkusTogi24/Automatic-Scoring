@@ -88,7 +88,7 @@ class ClassroomController extends Controller
         ->orderBy("exam.start_time", "desc")
         ->get();
 
-        // dd($exams);
+        dd($exams);
 
         $total_student = ClassroomAndMember::select(DB::raw("count(classroom_and_member.id) as total_student"))
         ->leftJoin("users", "classroom_and_member.member_id", "=", "users.id")

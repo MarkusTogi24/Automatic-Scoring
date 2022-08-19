@@ -204,7 +204,7 @@
                 <div class="flex justify-between text-white bg-primary-50 rounded-md">
                     @if (Auth::user()->role == "GURU")
                         <div class="w-[33%] text-sm px-4 py-[1.25rem]">
-                            <a href="{{ route('exam.show', [$classroom->id, $exam->id]) }}" class="hover:font-semibold" >{{ $exam->name }} - {{ $classroom->name }}</a>
+                            <a href="{{ route('exam.show', [$classroom->id, $exam->ex_id]) }}" class="hover:font-semibold" >{{ $exam->name }} - {{ $classroom->name }}</a>
                         </div>
                         <p class="w-[32%] block text-sm px-4 py-[1.25rem] text-center">{{ $exam->total_submission }} / {{ $total_student ? $total_student : '0' }} Siswa Menyelesaikan</p>
                         <p class="w-[33%] block text-sm px-4 py-[1.25rem] text-center">
@@ -227,7 +227,7 @@
                             {{ date_format(date_create($exam->end_time),"H:i") }}
                         </p>
                         <div class="w-[12%] text-sm px-4 py-[1.25rem] text-center">
-                            <a href="{{ route('exam.show', [$classroom->id, $exam->id]) }}" class="underline underline-offset-1 hover:font-bold">
+                            <a href="{{ route('exam.show', [$classroom->id, $exam->ex_id]) }}" class="underline underline-offset-1 hover:font-bold">
                                 {{-- {{ $exam->is_open ? 'Mulai' : 'Lihat' }} --}}
                                 Lihat
                             </a>
