@@ -23,7 +23,7 @@
             </button>
             <button type="button" x-on:click="showUploadAccountPopUp = true"
                 class="block text-sm lg:text-base py-1 px-4 lg:px-5 rounded bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center text-white">
-                Import Akun
+                Impor Akun
             </button>
         </div>
     </div>
@@ -175,7 +175,7 @@
                 <!-- POP UP HEADER -->
                 <div class="flex justify-between items-center mb-6">
                     <p class="block m-0 text-lg font-semibold text-gray-900 tracking-wide">
-                        Import Akun
+                        Impor Data Akun
                     </p>
                     <button type="button" id="closeImportAccountModal" class="block border-none outline-none text-gray-900 hover:text-gray-800 font-medium"
                         x-on:click="showUploadAccountPopUp = false">
@@ -200,7 +200,7 @@
                             <span>
                                 <span x-show="switchDisplay">Lihat</span>
                                 <span x-show="!switchDisplay">Tutup</span>
-                                Panduan Import Akun
+                                Panduan Impor Akun
                             </span>
                             <span x-bind:class="switchDisplay || 'rotate-90' ">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -211,22 +211,43 @@
                         <!-- IMPORT ACCOUNT GUIDANCE -->
                         <div class="mb-4 border border-primary rounded-lg p-4" x-show="!switchDisplay">
                             <p class="block mb-2 text-base font-bold text-gray-900">
-                                Bagaimana cara untuk mengimport akun?
+                                Bagaimana cara untuk mengimpor akun?
                             </p>
                             <p class="block mb-2 text-sm text-gray-900">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mi dolor ultrices lectus et bibendum eget feugiat amet hendrerit. Tellus in tortor aliquam egestas. Nunc ut cursus velit nulla. Enim mattis sed scelerisque ut nec tempor vitae. Tincidunt placerat quisque velit, sed velit. Id metus malesuada in volutpat. Ac sodales mi mi magna diam.
+                                <span class="font-semibold">Penting!</span> Pastikan anda mengunggah fail yang sesuai dengan templat yang telah disediakan. Silakan unduh dan baca terlebih dahulu fail <span class="font-semibold text-primary">Panduan Impor</span>, kemudian gunakan juga fail <span class="font-semibold text-success">Templat Excel</span> di bawah ini untuk memudahkan anda ketika ingin mengimpor akun, dan menghindari kemungkinan terjadinya kesalahan yang dapat memicu kerusakan pada sistem.
+                                
+                                {{-- <span class="font-semibold text-success">Templat Excel</span>
+                                <span class="font-semibold"></span> --}}
+                                {{-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mi dolor ultrices lectus et bibendum eget feugiat amet hendrerit. Tellus in tortor aliquam egestas. Nunc ut cursus velit nulla. Enim mattis sed scelerisque ut nec tempor vitae. Tincidunt placerat quisque velit, sed velit. Id metus malesuada in volutpat. Ac sodales mi mi magna diam. --}}
                             </p>
-                            <p class="block mb-2 text-base font-bold text-gray-900">
-                                Template Excel
-                            </p>
-                            <a href="{{ asset('file/Template Import Akun.xlsx') }}" class="flex items-center gap-3 w-fit text-white bg-primary hover:bg-primary-70 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm pl-3 pr-5 py-1.5" download>
-                                <span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                    </svg>
-                                </span>
-                                <span>Download</span>
-                            </a>
+                            <div class="flex gap-4 justify-start items-center">
+                                <div class="">
+                                    <p class="block mb-2 text-base font-bold text-gray-900">
+                                        Panduan Impor
+                                    </p>
+                                    <a href="{{ asset('file/Panduan Impor Akun.pdf') }}" class="flex items-center gap-3 w-fit text-white bg-primary hover:bg-primary-70 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm pl-3 pr-5 py-1.5" download>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                            </svg>
+                                        </span>
+                                        <span>Download</span>
+                                    </a>
+                                </div>
+                                <div class="">
+                                    <p class="block mb-2 text-base font-bold text-gray-900">
+                                        Templat Excel
+                                    </p>
+                                    <a href="{{ asset('file/Templat Impor Akun.xlsx') }}" class="flex items-center gap-3 w-fit text-white bg-success hover:bg-success-70 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-md text-sm pl-3 pr-5 py-1.5" download>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                            </svg>
+                                        </span>
+                                        <span>Download</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <!-- IMPORT ACCOUNT DRAG AND DROP -->
                         <div class="w-full mb-4 bg-primary-10" x-show="switchDisplay">
@@ -281,7 +302,7 @@
         </div>
     </div>
 
-    <!-- "EDIT QUESTION" POP UP FOR TEACHER -->
+    <!-- "EDIT ACCOUNT" POP UP -->
     <div class="fixed z-[2220] inset-0"
         x-cloak x-show="showEditAccountPopUp">
         <div class="absolute z-[2222] inset-0 bg-black bg-opacity-30 flex justify-center items-center py-4">
@@ -371,7 +392,7 @@
         </div>
     </div>
 
-    <!-- "DELETE QUESTION" POP UP FOR TEACHER -->
+    <!-- "DELETE ACCOUNT" POP UP -->
     <div class="fixed z-[2220] inset-0"
         x-cloak x-show="showDeleteAccountPopUp">
         <div class="absolute z-[2222] inset-0 bg-black bg-opacity-30 flex justify-center items-center py-4">

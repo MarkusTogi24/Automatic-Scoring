@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Admin\Account\StoreAccountRequest;
 use App\Http\Requests\Admin\Account\UpdateAccountRequest;
@@ -61,21 +62,27 @@ class AccountController extends Controller
 
     public function upload(ImportAccountsRequest $request)
     {
-        $temp = $request->file('accountFile' . $request->type)->store('temp');
-        $path = storage_path('app') . '/' . $temp;
+        // $temp = $request->file('accountFile' . $request->type)->store('temp');
+        // $path = storage_path('app') . '/' . $temp;
 
-        $accounts = Excel::toCollection(new AccountsImport, $path);
+        $file = $request->file('accountFile')->getRealPath();
+
+        $accounts = Excel::toCollection(new AccountsImport, $file);
 
         $db_emails = User::all()->pluck('email')->toArray();
+
+        // dd($file, $accounts);
 
         try {
             $response = (new AccountsStoreAction)->importAccounts($accounts, $db_emails);
         } catch (\Exception $exception) {
             return redirect()->back()
-                ->with("failed", "Terjadi kesalahan saat akan menyimpan akun, harap coba beberapa saat lagi.");
-        } catch (\Error $error) {
+                ->with("failed", "Terjadi kesalahan saat akan menyimpan akun, harap pastikan fail sudah sesuai dengan panduan impor dan coba beberapa saat lagi.");
+                // ->with("failed", $exception);
+            } catch (\Error $error) {
             return redirect()->back()
-                ->with("failed", "Terjadi kesalahan saat akan menyimpan akun, harap coba beberapa saat lagi.");
+                ->with("failed", "Terjadi kesalahan saat akan menyimpan akun, harap pastikan fail sudah sesuai dengan panduan impor dan coba beberapa saat lagi.");
+                // ->with("failed", $error);
         }
 
         if(is_numeric($response)){

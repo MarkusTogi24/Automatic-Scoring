@@ -4,8 +4,9 @@ namespace App\Imports;
 
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 
-class AccountsImport implements ToCollection
+class AccountsImport implements ToCollection, SkipsEmptyRows
 {
     public function collection(Collection $rows)
     {

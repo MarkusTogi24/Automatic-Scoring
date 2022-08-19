@@ -13,8 +13,10 @@ class AccountsStoreAction
         $existInDbMessage   = "Email pada nomor ";
         $existInDbCount     = 0;
 
-        $invalidRoleMessage = "Role pada nomor ";
+        $invalidRoleMessage = "Peran pada nomor ";
         $invalidRoleCount   = 0;
+
+        $emptyCellCount     = 0;
 
         $input_email = array();
 
@@ -22,6 +24,11 @@ class AccountsStoreAction
             if($index == 0) continue;
 
             $input_email[] = $account[2];
+
+            // CHECK IF THERE'S AN EMPTY CELL IN A ROW
+            if( $account[1] == null || $account[2] == null || $account[3] == null || $account[4] == null ){
+                $emptyCellCount++;
+            }
             
             // CHECK IF EMAIL EXIST IN DB
             if (in_array( $account[2], $db_emails )) {
@@ -46,21 +53,21 @@ class AccountsStoreAction
                 $duplicateEmailMessage .= $value . ", ";
             } 
         }
-
-        if($existInDbCount > 0){ // RETURN IF THERE IS EMAIL THAT ALREADY EXIST IN DB
-            $existInDbMessage .= "sudah digunakan, harap periksa file sebelum diunggah.";
+        if($emptyCellCount > 0){ // RETURN IF THERE IS AN EMPTY CELL IN A ROW
+            return "Masih terdapat sel data yang kosong, harap periksa fail sebelum diunggah.";
+        }else if($existInDbCount > 0){ // RETURN IF THERE IS EMAIL THAT ALREADY EXIST IN DB
+            $existInDbMessage .= "sudah digunakan, harap periksa fail sebelum diunggah.";
             return $existInDbMessage;
         }else if ($invalidRoleCount > 0) { // RETURN IF THERE IS ROLE THAT INVALID
-            $invalidRoleMessage .= "tidak valid, harap pastikan role yang dimasukkan adalah \"GURU\" atau \"SISWA\".";
+            $invalidRoleMessage .= "tidak valid, harap pastikan peran yang dimasukkan adalah \"GURU\" atau \"SISWA\".";
             return $invalidRoleMessage;
         }else if (sizeof($duplicates) > 0) { // RETURN IF THERE IS EMAIL DUPLICATION
-            $duplicateEmailMessage .= "harap periksa file sebelum diunggah.";
+            $duplicateEmailMessage .= "harap periksa fail sebelum diunggah.";
             return $duplicateEmailMessage;
         }else{
             $savedAccount = 0;
             foreach ($accounts[0] as $index => $account) {
                 if($index == 0) continue;
-
                 $new_account                = new User;
                 $new_account->name          = $account[1];
                 $new_account->email         = $account[2];
