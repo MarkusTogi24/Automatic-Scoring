@@ -62,12 +62,10 @@ class AccountController extends Controller
 
     public function upload(ImportAccountsRequest $request)
     {
-        // $temp = $request->file('accountFile' . $request->type)->store('temp');
-        // $path = storage_path('app') . '/' . $temp;
+        $temp = $request->file('accountFile' . $request->type)->store('temp');
+        $path = storage_path('app') . '/' . $temp;
 
-        $file = $request->file('accountFile')->getRealPath();
-
-        $accounts = Excel::toCollection(new AccountsImport, $file);
+        $accounts = Excel::toCollection(new AccountsImport, $path);
 
         $db_emails = User::all()->pluck('email')->toArray();
 
