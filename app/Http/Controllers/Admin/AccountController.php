@@ -71,8 +71,6 @@ class AccountController extends Controller
 
         $db_emails = User::all()->pluck('email')->toArray();
 
-        // dd($file, $accounts);
-
         try {
             $response = (new AccountsStoreAction)->importAccounts($accounts, $db_emails);
         } catch (\Exception $exception) {

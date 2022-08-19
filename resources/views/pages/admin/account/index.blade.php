@@ -215,10 +215,6 @@
                             </p>
                             <p class="block mb-2 text-sm text-gray-900">
                                 <span class="font-semibold">Penting!</span> Pastikan anda mengunggah fail yang sesuai dengan templat yang telah disediakan. Silakan unduh dan baca terlebih dahulu fail <span class="font-semibold text-primary">Panduan Impor</span>, kemudian gunakan juga fail <span class="font-semibold text-success">Templat Excel</span> di bawah ini untuk memudahkan anda ketika ingin mengimpor akun, dan menghindari kemungkinan terjadinya kesalahan yang dapat memicu kerusakan pada sistem.
-                                
-                                {{-- <span class="font-semibold text-success">Templat Excel</span>
-                                <span class="font-semibold"></span> --}}
-                                {{-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mi dolor ultrices lectus et bibendum eget feugiat amet hendrerit. Tellus in tortor aliquam egestas. Nunc ut cursus velit nulla. Enim mattis sed scelerisque ut nec tempor vitae. Tincidunt placerat quisque velit, sed velit. Id metus malesuada in volutpat. Ac sodales mi mi magna diam. --}}
                             </p>
                             <div class="flex gap-4 justify-start items-center">
                                 <div class="">
@@ -231,7 +227,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                             </svg>
                                         </span>
-                                        <span>Download</span>
+                                        <span>Unduh</span>
                                     </a>
                                 </div>
                                 <div class="">
@@ -244,7 +240,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                             </svg>
                                         </span>
-                                        <span>Download</span>
+                                        <span>Unduh</span>
                                     </a>
                                 </div>
                             </div>
