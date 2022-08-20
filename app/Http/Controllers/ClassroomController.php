@@ -73,7 +73,6 @@ class ClassroomController extends Controller
         $classroom = Classroom::find($id);
         
         $exams = EXAM::select(
-            // "exam.*",
             "exam.id as ex_id", 
             "exam.name as name",
             "exam.description as description",
@@ -87,8 +86,6 @@ class ClassroomController extends Controller
         ->groupBy("ex_id", "name", "description", "start_time", "end_time", "is_open", "result")
         ->orderBy("exam.start_time", "desc")
         ->get();
-
-        // dd($exams);
 
         $total_student = ClassroomAndMember::select(DB::raw("count(classroom_and_member.id) as total_student"))
         ->leftJoin("users", "classroom_and_member.member_id", "=", "users.id")

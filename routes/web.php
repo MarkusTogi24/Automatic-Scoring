@@ -61,6 +61,14 @@ Route::middleware(['auth', 'user'])->group(function () {
         Route::post('ubah-profil/', 'update')->name('update');
     });
 
+    // EXPORT ROUTES
+    Route::get('export-hasil-ujian/{exam}', [ExamController::class, 'exportExamResult'])->name('exam.export-result');
+    Route::get(
+        'export-seluruh-hasil-ujian-kelas/{classroom}', 
+        [StudentAndScoreController::class, 'exportClassExamsResult']
+    )->name('export-exams-result');
+
+
     
 });
 

@@ -11,10 +11,12 @@ use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Models\StudentAndScore;
 use App\Http\Helpers\ExamHelper;
+use App\Exports\ExamResultExport;
 use App\Models\ClassroomAndMember;
 use App\Models\StudentAndQuestion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Helpers\ClassroomHelper;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Exam\StoreExamRequest;
@@ -256,5 +258,10 @@ class ExamController extends Controller
         // dd($questions);
 
         return view('pages.user.exam.result', compact('questions', 'classroom', 'exam'));
+    }
+
+    public function exportExamResult(Exam $exam){
+        $classroom = Classroom::find($exam->class_id);
+        return Excel::download(new ExamResultExport($exam), "Rekap Hasil {$exam->name} - {$classroom->name}.xlsx");
     }
 }

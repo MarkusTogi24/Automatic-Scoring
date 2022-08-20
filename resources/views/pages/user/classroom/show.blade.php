@@ -30,9 +30,9 @@
                 <button x-on:click="showAddExamPopUp = true" type="button" class="block whitespace-nowrap text-sm lg:text-base py-1.5 px-2 lg:px-5 bg-primary hover:bg-primary-70 text-white rounded-md font-medium">
                     Tambah Ujian Baru
                 </button>
-                <button x-on:click="showEditPopUp = true" type="button" class="block whitespace-nowrap text-sm lg:text-base py-1.5 px-2 lg:px-5 bg-primary hover:bg-primary-70 text-white rounded-md font-medium">
+                <a href="{{ route('export-exams-result', $classroom->id) }}" class="block whitespace-nowrap text-sm lg:text-base py-1.5 px-2 lg:px-5 bg-primary hover:bg-primary-70 text-white rounded-md font-medium">
                     Unduh Rekap Nilai Keseluruhan
-                </button>
+                </a>
             </div>
         </div>
 

@@ -122,10 +122,10 @@
         <div class="w-full" x-cloak x-show="!switchSection">
             <!-- MAIN CONTENT -> EXAM RESULT ACTION GROUP -->
             <div class="flex justify-start w-full mb-4 lg:mb-8">
-                <button type="button" 
+                <a href="{{ route('exam.export-result', $exam->id) }}" type="button" 
                     class="block text-sm lg:text-base py-1 px-4 lg:px-5 rounded bg-primary hover:bg-primary-70 focus:ring-2 focus:outline-none focus:ring-blue-300 text-center text-white">
                     Unduh Hasil Ujian
-                </button>
+                </a>
             </div>
 
             <!-- MAIN CONTENT -> STUDENTS' EXAM RESULT -->
