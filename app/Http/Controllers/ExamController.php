@@ -255,8 +255,6 @@ class ExamController extends Controller
             ->orderBy('id')
             ->get();
 
-        // dd($questions);
-
         return view('pages.user.exam.result', compact('questions', 'classroom', 'exam'));
     }
 

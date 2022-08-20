@@ -7,14 +7,40 @@ use App\Models\Classroom;
 use App\Models\StudentAndScore;
 use App\Models\ClassroomAndMember;
 use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ClassExamsResultExport implements FromArray
+class ClassExamsResultExport implements FromArray, ShouldAutoSize, WithStyles
 {
     protected $class_obj;
 
     public function __construct(Classroom $class)
     {
         $this->class_obj = $class;
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1 => [
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                ],
+            ],
+            'A'  => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                ],
+            ],
+            'C:AZ' => [
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                ],
+            ],
+        ];
     }
 
     public function array(): array
@@ -55,7 +81,7 @@ class ClassExamsResultExport implements FromArray
         });
 
         $class_exam_result_arr = array();
-        $class_exam_result_header = ["Nomor", "Nama Siswa"];
+        $class_exam_result_header = ["No.", "Nama Siswa"];
 
         foreach ($exams as $exam) {
             $class_exam_result_header[] = $exam->name;
