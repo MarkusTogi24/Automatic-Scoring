@@ -70,10 +70,12 @@ class QuestionController extends Controller
         $this->helper->authorizing_by_role("GURU");
         $this->helper->authorizing_classroom_member($classroom->id);
 
-        $temp = $request->file('questionFile' . $request->type)->store('temp');
-        $path = storage_path('app') . '/' . $temp;
+        // $temp = $request->file('questionFile' . $request->type)->store('temp');
+        // $path = storage_path('app') . '/' . $temp;
 
-        $questions = Excel::toCollection(new QuestionsImport, $path);
+        // $questions = Excel::toCollection(new QuestionsImport, $path);
+
+        $questions = Excel::toCollection(new QuestionsImport, $request->file('questionFile')->store('temp'));
 
         try {
             $response = (new QuestionsStoreAction)->importQuestions($questions, $exam);
