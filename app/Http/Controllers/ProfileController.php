@@ -34,8 +34,10 @@ class ProfileController extends Controller
         $user = User::find(Auth::user()->id);
         
         if(isset($validated["profile_picture"])){
-            if(Storage::exists($user->profile_picture)){
-                Storage::delete($user->profile_picture);
+            if($user->profile_picture){
+                if( Storage::exists($user->profile_picture)){
+                    Storage::delete($user->profile_picture);
+                }
             }
             $storeImage                     = $request->file('profile_picture')->store('profile-pictures');
             $validated["profile_picture"]   = $storeImage;
