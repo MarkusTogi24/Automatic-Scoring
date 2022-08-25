@@ -41,5 +41,8 @@
             
         @endif
     </div>
+    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/flowbite.js') }}"></script>
+    <script src="{{ asset('js/jQuery.min.js') }}"></script>
 </body>
 </html>
