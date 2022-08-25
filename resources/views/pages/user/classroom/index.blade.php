@@ -107,7 +107,7 @@
                     <div class="w-full aspect-video bg-[url('/image/BG2.png')] bg-cover bg-center rounded-md mb-2">
                     </div>
                     <div class="w-full h-16 relative px-2">
-                        <a href="{{ route('classroom.show', $classroom->classroom_id) }}" class="flex flex-col text-primary hover:text-primary-70 font-medium tracking-wide">
+                        <a href="{{ route('classroom.show', $classroom->class_id) }}" class="flex flex-col text-primary hover:text-primary-70 font-medium tracking-wide w-fit">
                             <span class="block m-0">{{ $classroom->name }}</span>
                             @php
                                 $exploded = explode(" ",$classroom->description);
@@ -115,7 +115,8 @@
                             <span class="block m-0">{{ implode(" ", array_splice($exploded, 0, 2)) }}</span>
                         </a>
                         <div class="absolute rounded-full w-[72px] h-[72px] bottom-10 right-5 overflow-hidden">
-                            <img src="{{ asset('image/dummy_pp.png') }}" class="w-full h-auto" alt="TEACHER">
+                            <img src="{{ $classroom->teacher_pic ? asset('storage/'.$classroom->teacher_pic) : asset('image/PP.jpg') }}" 
+                                class="w-full h-auto" alt="TEACHER">
                         </div>
                     </div>
                 </div>

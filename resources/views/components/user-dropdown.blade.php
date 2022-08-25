@@ -3,7 +3,7 @@
     <button class="flex items-center gap-2"
         x-on:click="showAuthMenu =! showAuthMenu"
     >
-        <img src="{{ asset('image/PP.jpg') }}" class="rounded-full w-9 h-9" alt="">
+        <img src="{{ Auth::user()->profile_picture ? asset('storage/'.Auth::user()->profile_picture) : asset('image/PP.jpg') }}" class="bg-white rounded-full w-9 h-9" alt="">
         <p class="hidden lg:inline-block text-sm">{{ explode(" ",Auth::user()->name)[0] }}</p>
         <span class="hidden lg:inline-block" x-bind:class=" showAuthMenu && 'rotate-180' ">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -85,7 +85,7 @@
             x-transition:leave.duration.300ms
         >
             <input class="block border border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 w-full p-1.5 px-8 custom-placeholder" 
-                type="text" name="search" id="search" placeholder="Cari">
+                type="text" name="search" id="mobileSearch" placeholder="Cari">
             <span class="absolute inset-y-2 left-2 z-[1000] w-8 p-1.5 aspect-square flex items-center text-primary-50">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

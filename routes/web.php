@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\ClassroomController as ClassController;
 use App\Http\Controllers\StudentAndScoreController;
 use App\Models\StudentAndScore;
 
-Route::get('/', function () {
+Route::middleware('guest')->get('/', function () {
     return redirect('login');
 });
 
@@ -98,7 +98,7 @@ Route::middleware(['auth', 'admin'])->as('admin.')->prefix('admin')->group(funct
 // Route::resource('/classroom', ClassroomController::class);
 
 // Route for see member of classroom
-Route::get('/classroom/{classroom_id}/members', [ClassroomAndMemberController::class, 'index']);
+// Route::get('/classroom/{classroom_id}/members', [ClassroomAndMemberController::class, 'index']);
 
 // Route for create new exam
 // Route::get('/classroom/{classroom_id}/exam-create', [ExamController::class, 'create']);
@@ -115,7 +115,7 @@ Route::get('/classroom/{classroom_id}/members', [ClassroomAndMemberController::c
 // Route::put('/classroom/{classroom_id}/exam-update/{exam_id}', [ExamController::class, 'update']);
 
 // Route for delete exam entity
-Route::delete('/classroom/{classroom_id}/exam-delete/{exam_id}', [ExamController::class, 'destroy']);
+// Route::delete('/classroom/{classroom_id}/exam-delete/{exam_id}', [ExamController::class, 'destroy']);
 
 // Route for open or close exam
 // Route::post('/classroom/{classroom_id}/exam-change-status/{exam_id}', [ExamController::class, 'changeStatus']);
@@ -130,17 +130,18 @@ Route::delete('/classroom/{classroom_id}/exam-delete/{exam_id}', [ExamController
 // Route::post('/classroom/{classroom_id}/exam-add-question/{exam_id}', [QuestionController::class, 'store']);
 
 // Route for update question of the exam
-Route::get('/classroom/{classroom_id}/exam-edit-question/{question_id}', [QuestionController::class, 'edit']);
-Route::put('/classroom/{classroom_id}/exam-edit-question/{question_id}', [QuestionController::class, 'update']);
+// Route::get('/classroom/{classroom_id}/exam-edit-question/{question_id}', [QuestionController::class, 'edit']);
+// Route::put('/classroom/{classroom_id}/exam-edit-question/{question_id}', [QuestionController::class, 'update']);
 
 // Route for delete exam question
-Route::get('/classroom/{classroom_id}/exam-delete-question/{question_id}', [QuestionController::class, 'destroy']);
+// Route::get('/classroom/{classroom_id}/exam-delete-question/{question_id}', [QuestionController::class, 'destroy']);
 
 // Route::resource('/question', QuestionController::class);
-Route::resource('/member', ClassroomAndMemberController::class);
+// Route::resource('/member', ClassroomAndMemberController::class);
 
-Route::get('/total_score/{class_id}', [StudentAndScoreController::class, 'showRecordedScoreAllExam']);
-Route::get('/total_score-per-exam/{exam_id}', [StudentAndScoreController::class, 'showRecordedScorePerExam']);
+// Route::get('/total_score/{class_id}', [StudentAndScoreController::class, 'showRecordedScoreAllExam']);
+// Route::get('/total_score-per-exam/{exam_id}', [StudentAndScoreController::class, 'showRecordedScorePerExam']);
+
 Route::fallback(function () {
-    return view('welcome');
+    return view('notfound');
 });

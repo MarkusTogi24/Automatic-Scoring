@@ -25,6 +25,7 @@ class UpdateProfileRequest extends FormRequest
     public function rules()
     {
         return [
+            'profile_picture'       => 'nullable|file',
             'name'                  => 'required',
             'email'                 => [
                 'required',

@@ -28,10 +28,16 @@ class ClassroomController extends Controller
     {
         $this->helper->authorizing_by_role(["GURU", "SISWA"]);
 
-        $classrooms = Classroom::select("*")
-        ->leftJoin("classroom_and_member", "classroom.id", "=", "classroom_and_member.classroom_id")
-        ->where("classroom_and_member.member_id", Auth::user()->id)
-        ->get();
+        $classrooms = Classroom::select(
+                "classroom.id as class_id", 
+                "classroom.name as name", 
+                "classroom.description as description", 
+                "users.profile_picture as teacher_pic"
+            )
+            ->leftJoin("classroom_and_member", "classroom.id", "=", "classroom_and_member.classroom_id")
+            ->leftJoin("users", "classroom.teacher_id", "=", "users.id")
+            ->where("classroom_and_member.member_id", Auth::user()->id)
+            ->get();
 
         return view('pages.user.classroom.index', compact('classrooms'));
     }

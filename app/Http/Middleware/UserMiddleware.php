@@ -11,7 +11,7 @@ class UserMiddleware
     {
         $user = auth()->user();
         if ($user->role == "ADMIN") {
-            return response()->view('welcome');
+            return response()->view('notfound');
         }
         return $next($request);
     }

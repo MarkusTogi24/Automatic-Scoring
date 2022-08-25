@@ -2,8 +2,9 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\UserMiddleware;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\GuestMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -48,6 +49,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         
+        'guest' => GuestMiddleware::class,
         'admin' => AdminMiddleware::class,
         'user' => UserMiddleware::class,
     ];
