@@ -49,7 +49,7 @@
                     Nama Lengkap
                 </label>
                 <input type="text" id="name" name="name" value="{{ old('name') ? old('name') : Auth::user()->name }}"
-                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('name') mb-0 @else mb-4 @enderror" 
+                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('name') 'mb-0' @else 'mb-4' @enderror" 
                     autocomplete="off" placeholder="Nama Lengkap">
                 @error('name')
                     <p class="block mt-1 mb-4 text-xs font-medium text-danger">{{ $message }}</p>
@@ -60,7 +60,7 @@
                     Alamat Email
                 </label>
                 <input type="email" id="email" name="email" value="{{ old('email') ? old('email') : Auth::user()->email }}"
-                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('email') mb-0 @else mb-4 @enderror" 
+                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('email') 'mb-0' @else 'mb-4' @enderror" 
                     autocomplete="off" placeholder="Alamat Email">
                 @error('email')
                     <p class="block mt-1 mb-4 text-xs font-medium text-danger">{{ $message }}</p>
@@ -71,7 +71,7 @@
                     Kata Sandi Saat Ini
                 </label>
                 <input type="password" id="old_password" name="old_password" value="{{ old('old_password') }}"
-                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('old_password') mb-0 @else mb-4 @enderror" 
+                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('old_password') 'mb-0' @else 'mb-4' @enderror" 
                     autocomplete="off" placeholder="Kata Sandi Saat Ini">
                 @error('old_password')
                     <p class="block mt-1 mb-4 text-xs font-medium text-danger">{{ $message }}</p>
@@ -83,7 +83,7 @@
                 </label>
                 <small class="text-gray-500 block m-0 mb-1 font-bold">Opsional</small>
                 <input type="password" id="new_password" name="new_password" value="{{ old('new_password') }}"
-                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('new_password') mb-0 @else mb-4 @enderror" 
+                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('new_password') 'mb-0' @else 'mb-4' @enderror" 
                     autocomplete="off" placeholder="Kata Sandi Baru">
                 @error('new_password')
                     <p class="block mt-1 mb-4 text-xs font-medium text-danger">{{ $message }}</p>
@@ -95,7 +95,7 @@
                 </label>
                 <small class="text-gray-500 block m-0 mb-1 font-bold">Opsional</small>
                 <input type="password" id="password_confirmation" name="new_password_confirmation" value="{{ old('new_password_confirmation') }}"
-                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('new_password_confirmation') mb-0 @else mb-6 lg:mb-0 @enderror" 
+                    class="border-2 border-primary-20 text-primary-50 text-sm rounded-md focus:ring-primary-70 focus:border-primary-70 block w-full lg:w-72 p-2.5 custom-placeholder @error('new_password_confirmation') 'mb-0' @else 'mb-6 lg:mb-0' @enderror" 
                     autocomplete="off" placeholder="Konfirmasi Kata Sandi Baru">
                 @error('new_password_confirmation')
                     <p class="block mt-1 mb-6 lg:mb-0 text-xs font-medium text-danger">{{ $message }}</p>
