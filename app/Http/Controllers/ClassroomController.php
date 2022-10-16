@@ -78,20 +78,33 @@ class ClassroomController extends Controller
 
         $classroom = Classroom::find($id);
         
-        $exams = EXAM::select(
-            "exam.id as ex_id", 
-            "exam.name as name",
-            "exam.description as description",
-            "exam.start_time as start_time",
-            "exam.end_time as end_time",
-            "exam.is_open as is_open",
-            DB::raw("student_and_score.id as result"),
-            DB::raw('count(student_and_score.id) as total_submission'))
-        ->leftJoin("student_and_score", "exam.id", "=", "student_and_score.exam_id")
-        ->where("exam.class_id", $classroom->id)
-        ->groupBy("ex_id", "name", "description", "start_time", "end_time", "is_open", "result")
-        ->orderBy("exam.start_time", "desc")
-        ->get();
+        if (Auth::user()->role == "GURU") {
+            $exams = EXAM::select(
+                "exam.id as ex_id", 
+                "exam.name as name",
+                "exam.description as description",
+                "exam.start_time as start_time",
+                "exam.end_time as end_time",
+                "exam.is_open as is_open",
+                DB::raw('count(student_and_score.id) as total_submission'))
+            ->leftJoin("student_and_score", "exam.id", "=", "student_and_score.exam_id")
+            ->where("exam.class_id", $classroom->id)
+            ->groupBy("ex_id")
+            ->orderBy("exam.start_time", "desc")
+            ->get();
+        } else {
+            $exams = EXAM::select(
+                "exam.id as ex_id", 
+                "exam.name as name",
+                "exam.description as description",
+                "exam.start_time as start_time",
+                "exam.end_time as end_time",
+                "exam.is_open as is_open",
+                DB::raw("(case (select count(student_and_score.id) from student_and_score where student_and_score.exam_id = exam.id and student_and_score.student_id = ".Auth::user()->id.") when 0 then null else true end) as result "))
+            ->where("exam.class_id", $classroom->id)
+            ->orderBy("exam.start_time", "desc")
+            ->get();
+        }
 
         $total_student = ClassroomAndMember::select(DB::raw("count(classroom_and_member.id) as total_student"))
         ->leftJoin("users", "classroom_and_member.member_id", "=", "users.id")

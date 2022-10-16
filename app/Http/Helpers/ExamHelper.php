@@ -54,16 +54,28 @@ class ExamHelper extends ClassroomHelper{
     }
 
     function save_total_score($exam_id){
+        echo shell_exec('python3 /home/AutoScoringDev/public_html/ai_essayScoring/tf_idf_cosine.py '.$exam_id.' '.Auth::user()->id.'');
+        $student_and_questions = StudentAndScore::select('id')->where('exam_id', $exam_id)->where('student_id', Auth::user()->id)->get();
         $total_score_arr = StudentAndQuestion::select(DB::raw("sum(student_and_question.score) as score"))
             ->leftJoin("question", "question.id", '=', "student_and_question.question_id")
             ->where("question.exam_id", $exam_id)
             ->where("student_and_question.student_id", Auth::user()->id)
             ->get();
 
-        $total_score_entity = new StudentAndScore;
+        if (count($student_and_questions) > 0) {
+            $total_score_entity = StudentAndScore::find($student_and_questions[0]->id);
+        } else {
+            $total_score_entity = new StudentAndScore;
+        }
+        
         $total_score_entity->exam_id = $exam_id;
         $total_score_entity->student_id = Auth::user()->id;
-        $total_score_entity->total_score = $total_score_arr[0]->score;
+        
+        if ($total_score_arr[0]->score) {
+            $total_score_entity->total_score = $total_score_arr[0]->score;
+        }else {
+            $total_score_entity->total_score = 0;
+        }
         $total_score_entity->save();
     }
 }
