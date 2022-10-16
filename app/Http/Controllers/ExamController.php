@@ -63,7 +63,7 @@ class ExamController extends Controller
         $exam->class_id     = $classroom_id;
         $exam->name         = $validated['name'];
         $exam->description  = $validated['description'];
-        $exam->is_open      = 1;
+        $exam->is_open      = 0;
 
         // Set start_time
         $request_start      = new DateTime($validated['start_time']);
@@ -155,8 +155,19 @@ class ExamController extends Controller
         $minutes            = (int) explode(":", $validated['duration'])[1];
         $exam->end_time     = (clone $request_start)->add(new DateInterval("PT{$hours}H{$minutes}M"));
 
-        $exam->is_open      = $validated['is_open'];
-        $exam->save();
+
+        if ($validated['is_open'] == 1) {
+            $num_of_questions = Question::select(DB::raw('COUNT(id) as total_questions'))
+            ->where('exam_id', $exam->id)->get();
+            if ($num_of_questions[0]->total_questions > 0) {
+                $exam->is_open      = $validated['is_open'];
+                $exam->save();
+            }
+        } else {
+            $exam->is_open      = $validated['is_open'];
+            $exam->save();
+        }
+        
 
         return redirect()->route('exam.show', [$classroom, $exam])
             ->with("success","Perubahan pada {$exam->name} - {$classroom->name} berhasil disimpan!");
