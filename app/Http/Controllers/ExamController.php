@@ -157,11 +157,13 @@ class ExamController extends Controller
 
 
         if ($validated['is_open'] == 1) {
-            $num_of_questions = Question::select(DB::raw('COUNT(id) as total_questions'))
-            ->where('exam_id', $exam->id)->get();
-            if ($num_of_questions[0]->total_questions > 0) {
+            $questions_of_exam = Question::all()->where('exam_id', $exam->id);
+            if (count($questions_of_exam) > 0) {
                 $exam->is_open      = $validated['is_open'];
                 $exam->save();
+            } else {
+                return redirect()->route('exam.show', [$classroom, $exam])
+                ->with("failed","Gagal menyimpan perubahan pada {$exam->name} - {$classroom->name}! (Soal belum ditambahkan)");    
             }
         } else {
             $exam->is_open      = $validated['is_open'];
